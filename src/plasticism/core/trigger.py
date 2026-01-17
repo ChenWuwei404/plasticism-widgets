@@ -6,20 +6,20 @@ T = TypeVar("T", bound=Event)
 
 class Trigger(Generic[T]):
     def __init__(self) -> None:
-        self.actions: list[Callable[[Optional[T]], None]] = []
+        self.actions: list[Callable[[T], None]] = []
 
-    def connect(self, action: Callable[[Optional[T]], None]) -> None:
+    def connect(self, action: Callable[[T], None]) -> None:
         self.actions.append(action)
 
-    def disconnect(self, action: Callable[[Optional[T]], None]) -> None:
+    def disconnect(self, action: Callable[[T], None]) -> None:
         self.actions.remove(action)
     
     def clear(self) -> None:
         self.actions.clear()
 
-    def emit(self, event: Optional[T]) -> None:
+    def emit(self, event: T) -> None:
         for action in self.actions:
             action(event)
 
-    def __call__(self, event: Optional[T]) -> None:
+    def __call__(self, event: T) -> None:
         self.emit(event)
