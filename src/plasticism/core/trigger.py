@@ -1,4 +1,4 @@
-from typing import Callable, Optional, TypeVar, Generic
+from typing import Callable, TypeVar, Generic
 
 from plasticism.core.event import Event
 
