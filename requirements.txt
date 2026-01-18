@@ -1,0 +1,3 @@
+pygame-ce
+numpy
+PyWin32; sys_platform == "win32"
