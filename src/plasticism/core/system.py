@@ -11,8 +11,11 @@ if sys.platform == "win32":
     def _color_to_ref(color: Color) -> int:
         return (color.b << 16) | (color.g << 8) | color.r
 
-    def set_titlebar_color(hwnd: int, color: Color):
-        color_ref = _color_to_ref(color)
+    def set_titlebar_color(hwnd: int, color: Optional[Color]):
+        if color:
+            color_ref = _color_to_ref(color)
+        else:
+            color_ref = 0xFFFFFFFE  # Default color
         try:
             DWMWA_CAPTION_COLOR = 35
             # DWMWA_TEXT_COLOR = 36
