@@ -36,7 +36,7 @@ class Assigner:
     def remove_item(self, item: AssignerItem) -> None:
         self.items.remove(item)
 
-    def emit(self, event: Event) -> None:
+    def process(self, event: Event) -> None:
         for item in self.items:
             if item.check(event):
                 item.run(event)
