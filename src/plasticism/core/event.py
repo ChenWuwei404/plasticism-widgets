@@ -17,6 +17,8 @@ pygame_events: dict[int, Callable[[PygameEvent], Event]] = {
     constants.MOUSEWHEEL: lambda e: MouseScroll(mouse.get_pos()[0], mouse.get_pos()[1], e.x, e.y),
     constants.KEYDOWN: lambda e: KeyPress(e.unicode, e.key, e.mod),
     constants.KEYUP: lambda e: KeyRelease(e.unicode, e.key, e.mod),
+    constants.TEXTINPUT: lambda e: TextInput(e.text),
+    constants.TEXTEDITING: lambda e: TextEdit(e.text, e.start, e.length),
     constants.WINDOWRESIZED: lambda e: WindowResize(e.x, e.y),
     constants.WINDOWMOVED: lambda e: WindowMove(e.x, e.y),
     constants.WINDOWCLOSE: lambda e: WindowClose(),
@@ -90,6 +92,18 @@ class KeyRelease(KeyEvent):
 
 
 class WindowEvent(GlobalEvent):
+    pass
+
+@dataclass
+class TextEvent(GlobalEvent):
+    text: str
+
+@dataclass
+class TextEdit(TextEvent):
+    start: int
+    length: int
+
+class TextInput(TextEvent):
     pass
 
 @dataclass
