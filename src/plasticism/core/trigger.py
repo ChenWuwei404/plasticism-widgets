@@ -1,12 +1,13 @@
-from typing import Callable, TypeVar, Generic
+from typing import Callable, TypeVar, Generic, Type
 
 from plasticism.core.event import Event
 
 T = TypeVar("T", bound=Event)
 
 class Trigger(Generic[T]):
-    def __init__(self) -> None:
+    def __init__(self, event_type: Type[T]) -> None:
         self.actions: list[Callable[[T], None]] = []
+        self.event_type: Type[T] = event_type
 
     def connect(self, action: Callable[[T], None]) -> None:
         self.actions.append(action)
