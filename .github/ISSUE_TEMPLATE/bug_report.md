@@ -26,6 +26,7 @@ If applicable, add screenshots to help explain your problem.
 **Environment (please complete the following information):**
  - OS: [e.g. Windows11]
  - Python version [e.g. 3.13]
+- Pygame version [e.g. ce 2.0.1]
  - Plasticism version [e.g. 0.1]
 
 **Additional context**
