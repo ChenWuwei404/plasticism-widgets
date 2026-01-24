@@ -10,6 +10,9 @@ import logging
 class Event:
     handled = False
 
+class EventBundle(list[Event]):
+    pass
+
 pygame_events: dict[int, Callable[[PygameEvent], Event]] = {
     constants.MOUSEMOTION: lambda e: MouseMove(e.pos[0], e.pos[1], e.rel[0], e.rel[1]),
     constants.MOUSEBUTTONDOWN: lambda e: MousePress(e.pos[0], e.pos[1], e.button),

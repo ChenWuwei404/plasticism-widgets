@@ -44,3 +44,11 @@ if sys.platform == "win32":
             ))
         except Exception as e:
             print(e)
+
+elif sys.platform == "linux":
+    pass
+    # TODO: Implement for Linux platforms
+
+elif sys.platform == "macos":
+    pass
+    # TODO: Implement for macOS platforms
