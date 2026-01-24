@@ -49,6 +49,6 @@ elif sys.platform == "linux":
     pass
     # TODO: Implement for Linux platforms
 
-elif sys.platform == "macos"
+elif sys.platform == "macos":
     pass
     # TODO: Implement for macOS platforms
