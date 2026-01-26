@@ -1,6 +1,6 @@
 from typing import Optional
 
-from plasticism.core.event import Event, EventBundle, Processor, LocalEvent, SpreadEvent, GlobalEvent, MouseEvent
+from plasticism.core.event import Event, EventBundle, Processor, UniversalEvent, LocalEvent, SpreadEvent, GlobalEvent, MouseEvent
 from plasticism.core.assigner import Assigner, AssignerItem
 from plasticism.core.trigger import Trigger
 
@@ -75,6 +75,7 @@ class Widget:
     def handle_event(self, event: Event) -> None:
         bundle = self.create_event_bundle(event)
         self.process_events(bundle)
+        self.assign_events(bundle)
         [self.bubble_event(e) for e in bundle]
     
     def tunnel_event(self, event: Event) -> None:
