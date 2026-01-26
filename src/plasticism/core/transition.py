@@ -30,6 +30,8 @@ class Machine(Processor):
 
     def add_state(self, state: State) -> None:
         self.states.add(state)
+        if self.current_state is None:
+            self.current_state = state
 
     def add_states(self, states: Collection[State]) -> None:
         self.states.update(states)
