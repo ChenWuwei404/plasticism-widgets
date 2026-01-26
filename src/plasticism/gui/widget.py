@@ -1,5 +1,13 @@
 from typing import Optional
 
+from plasticism.core.event import LocalEvent, MouseEvent
+
+class MouseEnter(LocalEvent, MouseEvent):
+    pass
+
+class MouseLeave(LocalEvent, MouseEvent):
+    pass
+
 class Widget:
     def __init__(self) -> None:
         self.parent: Optional[Widget] = None
