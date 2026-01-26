@@ -1,5 +1,5 @@
 from typing import Callable, Optional, Collection
-from plasticism.core.event import Event, EventBundle
+from plasticism.core.event import Event, EventBundle, Processor
 
 from dataclasses import dataclass
 
@@ -23,7 +23,7 @@ class Transition:
 def class_judger(event_class: type[Event]) -> Callable[[Event], bool]:
     return lambda event: isinstance(event, event_class)
 
-class Machine:
+class Machine(Processor):
     def __init__(self) -> None:
         self.states: set[State] = set()
         self.current_state: Optional[State] = None

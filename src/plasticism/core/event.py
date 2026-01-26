@@ -16,6 +16,13 @@ class Event:
 class EventBundle(list[Event]):
     pass
 
+class Processor:
+    def __init__(self) -> None:
+        pass
+
+    def process_event(self, event_bundle: EventBundle) -> None:
+        pass
+
 pygame_events: dict[int, Callable[[PygameEvent], Event]] = {
     constants.MOUSEMOTION: lambda e: MouseMove(e.pos[0], e.pos[1], e.rel[0], e.rel[1]),
     constants.MOUSEBUTTONDOWN: lambda e: MousePress(e.pos[0], e.pos[1], e.button),
