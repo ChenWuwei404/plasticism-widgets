@@ -1,6 +1,6 @@
 from typing import Optional
 
-from plasticism.core.event import Event, EventBundle, Processor, UniversalEvent, LocalEvent, SpreadEvent, GlobalEvent, MouseEvent
+from plasticism.core.event import Event, EventBundle, Processor, UniversalEvent, KeyEvent, TextEvent, LocalEvent, SpreadEvent, GlobalEvent, MouseEvent
 from plasticism.core.assigner import Assigner, AssignerItem
 from plasticism.core.trigger import Trigger
 
@@ -27,6 +27,12 @@ class Widget:
         self.mouse_enter.connect(self.on_mouse_enter)
         self.on_mouse_leave = Trigger(MouseLeave)
         self.mouse_leave.connect(self.on_mouse_leave)
+
+    def is_mouse_focused(self) -> bool:
+        return False
+    
+    def is_keyboard_focused(self) -> bool:
+        return False
 
     def set_parent(self, parent: Optional['Widget']) -> None:
         self.parent = parent
@@ -83,3 +89,14 @@ class Widget:
             return
         if self.event_fetch_checker(event):
             self.handle_event(event)
+        
+        if isinstance(event, UniversalEvent):
+            [child.tunnel_event(event) for child in self.get_children()]
+        elif isinstance(event, MouseEvent):
+            focused_child = next((child for child in self.get_children() if child.is_mouse_focused()), None)
+            if focused_child:
+                focused_child.tunnel_event(event)
+        elif isinstance(event, KeyEvent) or isinstance(event, TextEvent):
+            focused_child = next((child for child in self.get_children() if child.is_keyboard_focused()), None)
+            if focused_child:
+                focused_child.tunnel_event(event)
