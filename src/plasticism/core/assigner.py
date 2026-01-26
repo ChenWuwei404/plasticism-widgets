@@ -38,9 +38,9 @@ class Assigner(Processor):
 
     def process_event(self, event_bundle: EventBundle) -> None:
         for event in event_bundle:
-            self.process(event)
+            self._process(event)
 
-    def process(self, event: Event) -> None:
+    def _process(self, event: Event) -> None:
         for item in self.items:
             if item.check(event):
                 item.run(event)
