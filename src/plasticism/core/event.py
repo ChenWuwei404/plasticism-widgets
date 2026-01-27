@@ -77,13 +77,13 @@ class MouseMove(MouseEvent, UniversalEvent):
     dy: int
 
 @dataclass
-class MouseButton(MouseEvent, GlobalEvent):
+class MouseButton(MouseEvent):
     button: int
 
-class MousePress(MouseButton):
+class MousePress(MouseButton, GlobalEvent):
     pass
 
-class MouseRelease(MouseButton):
+class MouseRelease(MouseButton, GlobalEvent):
     pass
 
 @dataclass
