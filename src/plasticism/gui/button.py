@@ -2,9 +2,9 @@ from plasticism.core.transition import State, Transition, Machine
 from plasticism.core.transition import class_judger
 
 from plasticism.gui.widget import MouseEnter, MouseLeave
-from plasticism.core.event import MousePress, MouseRelease, LocalEvent
+from plasticism.core.event import MousePress, MouseRelease, LocalEvent, MouseEvent
 
-class ButtonClick(LocalEvent):
+class ButtonClick(LocalEvent, MouseEvent):
     pass
 
 class ButtonMachine(Machine):
@@ -32,7 +32,7 @@ class ButtonMachine(Machine):
         self.pressed.add_transition(Transition(
             self.hover,
             class_judger(MouseRelease),
-            lambda e: ButtonClick(),
+            lambda e: ButtonClick(e.x, e.y),  # type: ignore
         ))
 
         self.pressed.add_transition(Transition(
