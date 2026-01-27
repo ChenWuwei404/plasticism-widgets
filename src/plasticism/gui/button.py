@@ -29,10 +29,10 @@ class ButtonMachine(Machine):
             class_judger(MousePress),
         ))
 
-        self.pressed.add_transition(Transition(
+        self.pressed.add_transition(Transition[MouseRelease](
             self.hover,
             class_judger(MouseRelease),
-            lambda e: ButtonClick(e.x, e.y, e.button),  # type: ignore
+            lambda e: ButtonClick(e.x, e.y, e.button),
         ))
 
         self.pressed.add_transition(Transition(
