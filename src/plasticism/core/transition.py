@@ -22,7 +22,7 @@ class Transition(Generic[T]):
     judger: Callable[[T], bool]
     signal: Optional[Callable[[T], Event]] = None
 
-def class_judger(event_class: type[Event]) -> Callable[[Event], bool]:
+def class_judger(event_class: type[T]) -> Callable[[T], bool]:
     return lambda event: isinstance(event, event_class)
 
 class Machine(Processor):
