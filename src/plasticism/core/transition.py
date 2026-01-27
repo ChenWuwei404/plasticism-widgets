@@ -1,4 +1,4 @@
-from typing import Callable, Optional, Collection
+from typing import Callable, Optional, Collection, Generic, TypeVar
 from plasticism.core.event import Event, EventBundle, Processor
 
 from dataclasses import dataclass
@@ -14,11 +14,13 @@ class State:
     def __repr__(self) -> str:
         return f"<State object: {self.name}>" if self.name else f"<State object at {id(self)}>"
 
+T = TypeVar('T', bound=Event)
+
 @dataclass
-class Transition:
+class Transition(Generic[T]):
     to_state: State
-    judger: Callable[[Event], bool]
-    signal: Optional[Callable[[Event], Event]] = None
+    judger: Callable[[T], bool]
+    signal: Optional[Callable[[T], Event]] = None
 
 def class_judger(event_class: type[Event]) -> Callable[[Event], bool]:
     return lambda event: isinstance(event, event_class)
