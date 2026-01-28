@@ -1,6 +1,6 @@
 from typing import TypeVar, Generic, Type
 
-from plasticism.core.event import Event
+from plasticism.core.event import Event, EventBundle, Processor
 from plasticism.core.trigger import Trigger
 
 T = TypeVar("T", bound=Event)
@@ -26,7 +26,7 @@ class AssignerItem(Generic[T]):
     def clear(self) -> None:
         self.triggers.clear()
 
-class Assigner:
+class Assigner(Processor):
     def __init__(self) -> None:
         self.items: list[AssignerItem] = []
 
@@ -36,7 +36,11 @@ class Assigner:
     def remove_item(self, item: AssignerItem) -> None:
         self.items.remove(item)
 
-    def process(self, event: Event) -> None:
+    def process_event(self, event_bundle: EventBundle) -> None:
+        for event in event_bundle:
+            self._process(event)
+
+    def _process(self, event: Event) -> None:
         for item in self.items:
             if item.check(event):
                 item.run(event)
