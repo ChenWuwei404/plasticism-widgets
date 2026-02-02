@@ -11,6 +11,26 @@ class MouseLeave(LocalEvent, MouseEvent):
     pass
 
 class Widget:
+    """
+    Base class for all GUI widgets.
+
+    ## Event System
+
+    ### Usage
+
+    Call `Widget.tunnel_event(event)` to start event handling
+    
+    The event system in Plasticism GUI is designed to handle various types of events efficiently and flexibly. Widgets can process events through a series of steps including filtering, fetching, processing, assigning, and bubbling.
+
+    ### Steps
+    
+    1. **Event Filtering**: Each widget can implement the `event_filter_checker` method to determine whether to filter out specific events. If an event is filtered out, it will not be processed further by that widget.
+    2. **Event Fetching**: The `event_fetch_checker` method allows widgets to decide whether to fetch an event for processing. If an event is fetched, it will be handled by the widget itself rather than being passed directly to its children.
+    3. **Event Processing**: Widgets can have multiple event processors that handle events in `Widget.event_processors`. The `process_events` method iterates through all registered processors to process the event bundle.
+    4. **Event Assigning**: The `assign_events` method uses an `Assigner` to manage event assignments. This allows for dynamic event handling based on the widget's configuration.
+    5. **Event Bubbling**: After processing, events can be bubbled up to parent widgets using the `bubble_event` method. This allows parent widgets to respond to events that were not fully handled by their children. Even can it used to spread signals to parent widgets.
+    
+    """
     def __init__(self) -> None:
         self.parent: Optional[Widget] = None
         self.children: list[Widget] = []
@@ -53,10 +73,28 @@ class Widget:
     def get_children(self) -> list['Widget']:
         return self.children
     
-    def event_filter(self, event: Event) -> bool:
+    def event_filter_checker(self, event: Event) -> bool:
+        """
+        Check whether to filter out the event.
+        
+        :param event: an Event to be checked
+        :type event: Event
+        :return: `True` if the event is to be filtered out
+        :rtype: bool
+        """
         return False
     
     def event_fetch_checker(self, event: Event) -> bool:
+        """
+        Check whether to fetch the event.
+
+        *fetch* means to handle the event at this widget and not pass it directly to children.
+        
+        :param event: an Event to be checked
+        :type event: Event
+        :return: `True` if the event is to be fetched
+        :rtype: bool
+        """
         return False
     
     def create_event_bundle(self, event: Event) -> EventBundle:
@@ -69,6 +107,12 @@ class Widget:
         self.assigner.process_event(event_bundle)
 
     def bubble_event(self, event: Event) -> None:
+        """
+        Bubble an event up to the parent widget if needed.
+        
+        :param event: an Event to be checked and bubbled
+        :type event: Event
+        """
         if self.parent:
             if isinstance(event, LocalEvent):
                 return
@@ -79,13 +123,27 @@ class Widget:
             self.get_parent().handle_event(event)
     
     def handle_event(self, event: Event) -> None:
+        """
+        Process an Event in this widget.
+        
+        :param event: an Event to be handled
+        :type event: Event
+        """
         bundle = self.create_event_bundle(event)
         self.process_events(bundle)
         self.assign_events(bundle)
         [self.bubble_event(e) for e in bundle]
     
     def tunnel_event(self, event: Event) -> None:
-        if self.event_filter(event):
+        """
+        Tunnel an event through this widget to its children.
+
+        IMPORTANT: Parent widgets should call this method of thier children to propagate events.
+        
+        :param event: an Event to be tunnelled
+        :type event: Event
+        """
+        if self.event_filter_checker(event):
             return
         if self.event_fetch_checker(event):
             self.handle_event(event)
