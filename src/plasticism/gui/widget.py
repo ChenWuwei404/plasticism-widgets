@@ -61,14 +61,26 @@ class Widget:
         self.on_mouse_leave = Trigger(MouseLeave)
         self.mouse_leave.connect(self.on_mouse_leave)
 
+    def set_max_width(self, max_width: Optional[int]) -> None:
+        self.max_width = max_width
+
     def get_max_width(self) -> int:
         return self.max_width if self.max_width else self.get_parent().get_width()
+
+    def set_min_width(self, min_width: int) -> None:
+        self.min_width = min_width
 
     def get_min_width(self) -> int:
         return self.min_width
     
+    def set_max_height(self, max_height: Optional[int]) -> None:
+        self.max_height = max_height
+    
     def get_max_height(self) -> int:
         return self.max_height if self.max_height else self.get_parent().get_height()
+    
+    def set_min_height(self, min_height: int) -> None:
+        self.min_height = min_height
     
     def get_min_height(self) -> int:
         return self.min_height
