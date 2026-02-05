@@ -14,6 +14,14 @@ class Widget:
     """
     Base class for all GUI widgets.
 
+    Subclasses should inherit from this class and implement their own rendering and event handling logic.
+
+    ## Layout Properties
+
+    Widgets have various layout properties that control their size and spacing. These properties include width, height, maximum and minimum sizes, padding, and margins.
+
+    Size means the size of the *box*, wrapping padding and content, while margin is outside the box. Occupied size means the size including margin. Just like CSS box model.
+
     ## Event System
 
     ### Usage
@@ -46,7 +54,19 @@ class Widget:
         self.min_width: int = 0
         self.min_height: int = 0
 
+        self.padding_left: int = 0
+        self.padding_right: int = 0
+        self.padding_top: int = 0
+        self.padding_bottom: int = 0
+
+        self.margin_left: int = 0
+        self.margin_right: int = 0
+        self.margin_top: int = 0
+        self.margin_bottom: int = 0
+
         # Event system properties
+
+        self.keyboard_focused = False
 
         self.event_processors: list[Processor] = []
 
@@ -65,7 +85,7 @@ class Widget:
         self.max_width = max_width
 
     def get_max_width(self) -> int:
-        return self.max_width if self.max_width else self.get_parent().get_width()
+        return self.max_width if self.max_width else self.get_parent().get_content_width()
 
     def set_min_width(self, min_width: int) -> None:
         self.min_width = min_width
@@ -77,7 +97,7 @@ class Widget:
         self.max_height = max_height
     
     def get_max_height(self) -> int:
-        return self.max_height if self.max_height else self.get_parent().get_height()
+        return self.max_height if self.max_height else self.get_parent().get_content_height()
     
     def set_min_height(self, min_height: int) -> None:
         self.min_height = min_height
@@ -118,6 +138,39 @@ class Widget:
             return self.get_min_height()
         else:
             return self.get_max_height()
+        
+    def get_size(self) -> tuple[int, int]:
+        return (self.get_width(), self.get_height())
+
+    def set_padding(self, padding: tuple[int, int, int, int]) -> None:
+        self.padding_left = padding[0]
+        self.padding_top = padding[1]
+        self.padding_right = padding[2]
+        self.padding_bottom = padding[3]
+
+    def set_margin(self, margin: tuple[int, int, int, int]) -> None:
+        self.margin_left = margin[0]
+        self.margin_top = margin[1]
+        self.margin_right = margin[2]
+        self.margin_bottom = margin[3]
+
+    def get_occupied_width(self) -> int:
+        return self.get_width() + self.margin_left + self.margin_right
+    
+    def get_occupied_height(self) -> int:
+        return self.get_height() + self.margin_top + self.margin_bottom
+    
+    def get_occupied_size(self) -> tuple[int, int]:
+        return (self.get_occupied_width(), self.get_occupied_height())
+    
+    def get_content_width(self) -> int:
+        return self.get_width() - self.padding_left - self.padding_right
+    
+    def get_content_height(self) -> int:
+        return self.get_height() - self.padding_top - self.padding_bottom
+    
+    def get_content_size(self) -> tuple[int, int]:
+        return (self.get_content_width(), self.get_content_height())
 
     def is_mouse_focused(self) -> bool:
         return False
