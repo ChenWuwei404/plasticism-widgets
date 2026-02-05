@@ -35,6 +35,19 @@ class Widget:
         self.parent: Optional[Widget] = None
         self.children: list[Widget] = []
 
+        # Layout properties
+
+        self.width: int = 0  # 0 means shrink to min, negative means stretch to max, positive means fixed size
+        self.height: int = 0
+
+        self.max_width: Optional[int] = None
+        self.max_height: Optional[int] = None
+
+        self.min_width: int = 0
+        self.min_height: int = 0
+
+        # Event system properties
+
         self.event_processors: list[Processor] = []
 
         self.assigner = Assigner()
@@ -47,6 +60,34 @@ class Widget:
         self.mouse_enter.connect(self.on_mouse_enter)
         self.on_mouse_leave = Trigger(MouseLeave)
         self.mouse_leave.connect(self.on_mouse_leave)
+
+    def get_max_width(self) -> int:
+        return self.max_width if self.max_width else self.get_parent().get_width()
+
+    def get_min_width(self) -> int:
+        return self.min_width
+    
+    def get_max_height(self) -> int:
+        return self.max_height if self.max_height else self.get_parent().get_height()
+    
+    def get_min_height(self) -> int:
+        return self.min_height
+    
+    def get_width(self) -> int:
+        if self.width > 0:
+            return self.width
+        elif self.width == 0:
+            return self.get_min_width()
+        else:
+            return self.get_max_width()
+        
+    def get_height(self) -> int:
+        if self.height > 0:
+            return self.height
+        elif self.height == 0:
+            return self.get_min_height()
+        else:
+            return self.get_max_height()
 
     def is_mouse_focused(self) -> bool:
         return False
