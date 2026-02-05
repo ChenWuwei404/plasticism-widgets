@@ -85,7 +85,7 @@ class Widget:
         self.max_width = max_width
 
     def get_max_width(self) -> int:
-        return self.max_width if self.max_width else self.get_parent().get_content_width()
+        return self.max_width if self.max_width is not None else self.get_parent().get_content_width() - self.margin_left - self.margin_right
 
     def set_min_width(self, min_width: int) -> None:
         self.min_width = min_width
@@ -97,7 +97,7 @@ class Widget:
         self.max_height = max_height
     
     def get_max_height(self) -> int:
-        return self.max_height if self.max_height else self.get_parent().get_content_height()
+        return self.max_height if self.max_height is not None else self.get_parent().get_content_height() - self.margin_top - self.margin_bottom
     
     def set_min_height(self, min_height: int) -> None:
         self.min_height = min_height
@@ -262,7 +262,7 @@ class Widget:
         """
         Tunnel an event through this widget to its children.
 
-        IMPORTANT: Parent widgets should call this method of thier children to propagate events.
+        IMPORTANT: Parent widgets should call this method of their children to propagate events.
         
         :param event: an Event to be tunnelled
         :type event: Event
