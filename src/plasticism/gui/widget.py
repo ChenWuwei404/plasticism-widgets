@@ -85,6 +85,24 @@ class Widget:
     def get_min_height(self) -> int:
         return self.min_height
     
+    def set_max_size(self, max_size: tuple[Optional[int], Optional[int]]) -> None:
+        self.set_max_width(max_size[0])
+        self.set_max_height(max_size[1])
+
+    def set_min_size(self, min_size: tuple[int, int]) -> None:
+        self.set_min_width(min_size[0])
+        self.set_min_height(min_size[1])
+
+    def set_width(self, width: int) -> None:
+        self.width = width
+
+    def set_height(self, height: int) -> None:
+        self.height = height
+
+    def set_size(self, size: tuple[int, int]) -> None:
+        self.set_width(size[0])
+        self.set_height(size[1])
+    
     def get_width(self) -> int:
         if self.width > 0:
             return self.width
