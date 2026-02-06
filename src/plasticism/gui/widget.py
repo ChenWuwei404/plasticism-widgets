@@ -90,14 +90,20 @@ class Widget:
         self.on_mouse_leave = Trigger(MouseLeave)
         self.mouse_leave.connect(self.on_mouse_leave)
 
+    def get_layout_width(self) -> int:
+        return self.get_parent().layout.get_layout_width(self) if self.parent else self.get_width()
+    
+    def get_layout_height(self) -> int:
+        return self.get_parent().layout.get_layout_height(self) if self.parent else self.get_height()
+
     def get_x(self) -> int:
         if self.parent is None:
             return self.x
         else:
             return self.get_parent().layout.get_layout_x(self) + self.x + (
                 0 if self.align_horizontal == AlignHorizontal.LEFT else
-                (self.get_parent().get_content_width() - self.get_occupied_width()) // 2 if self.align_horizontal == AlignHorizontal.CENTER else
-                self.get_parent().get_content_width() - self.get_occupied_width()
+                (self.get_layout_width() - self.get_occupied_width()) // 2 if self.align_horizontal == AlignHorizontal.CENTER else
+                self.get_layout_width() - self.get_occupied_width()
                 )
     
     def get_y(self) -> int:
@@ -106,15 +112,15 @@ class Widget:
         else:
             return self.get_parent().layout.get_layout_y(self) + self.y + (
                 0 if self.align_vertical == AlignVertical.TOP else
-                (self.get_parent().get_content_height() - self.get_occupied_height()) // 2 if self.align_vertical == AlignVertical.MIDDLE else
-                self.get_parent().get_content_height() - self.get_occupied_height()
+                (self.get_layout_height() - self.get_occupied_height()) // 2 if self.align_vertical == AlignVertical.MIDDLE else
+                self.get_layout_height() - self.get_occupied_height()
                 )
 
     def set_max_width(self, max_width: Optional[int]) -> None:
         self.max_width = max_width
 
     def get_max_width(self) -> int:
-        return minimum(self.max_width, self.get_parent().get_content_width() - self.margin_left - self.margin_right)
+        return minimum(self.max_width, self.get_layout_width() - self.margin_left - self.margin_right)
 
     def set_min_width(self, min_width: int) -> None:
         self.min_width = min_width
@@ -126,7 +132,7 @@ class Widget:
         self.max_height = max_height
     
     def get_max_height(self) -> int:
-        return minimum(self.max_height, self.get_parent().get_content_height() - self.margin_top - self.margin_bottom)
+        return minimum(self.max_height, self.get_layout_height() - self.margin_top - self.margin_bottom)
     
     def set_min_height(self, min_height: int) -> None:
         self.min_height = min_height
