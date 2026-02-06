@@ -3,6 +3,7 @@ from typing import Optional
 from plasticism.core.event import Event, EventBundle, Processor, UniversalEvent, KeyEvent, TextEvent, LocalEvent, SpreadEvent, GlobalEvent, MouseEvent
 from plasticism.core.assigner import Assigner, AssignerItem
 from plasticism.core.trigger import Trigger
+from plasticism.core.layout import Layout
 
 class MouseEnter(LocalEvent, MouseEvent):
     pass
@@ -45,6 +46,11 @@ class Widget:
 
         # Layout properties
 
+        self.layout = Layout(self)
+
+        self.x = 0
+        self.y = 0
+
         self.width: int = 0  # 0 means shrink to min, negative means stretch to max, positive means fixed size
         self.height: int = 0
 
@@ -80,6 +86,12 @@ class Widget:
         self.mouse_enter.connect(self.on_mouse_enter)
         self.on_mouse_leave = Trigger(MouseLeave)
         self.mouse_leave.connect(self.on_mouse_leave)
+
+    def get_x(self) -> int:
+        return self.get_parent().layout.get_layout_x(self) if self.parent else self.x
+    
+    def get_y(self) -> int:
+        return self.get_parent().layout.get_layout_y(self) if self.parent else self.y
 
     def set_max_width(self, max_width: Optional[int]) -> None:
         self.max_width = max_width
