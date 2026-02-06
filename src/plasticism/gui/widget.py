@@ -90,6 +90,12 @@ class Widget:
         self.on_mouse_leave = Trigger(MouseLeave)
         self.mouse_leave.connect(self.on_mouse_leave)
 
+    def get_layout_x(self) -> int:
+        return self.get_parent().layout.get_layout_x(self) if self.parent else self.x
+    
+    def get_layout_y(self) -> int:
+        return self.get_parent().layout.get_layout_y(self) if self.parent else self.y
+
     def get_layout_width(self) -> int:
         return self.get_parent().layout.get_layout_width(self) if self.parent else self.get_width()
     
@@ -100,7 +106,7 @@ class Widget:
         if self.parent is None:
             return self.x
         else:
-            return self.get_parent().layout.get_layout_x(self) + self.x + (
+            return self.get_layout_x() + self.x + (
                 0 if self.align_horizontal == AlignHorizontal.LEFT else
                 (self.get_layout_width() - self.get_occupied_width()) // 2 if self.align_horizontal == AlignHorizontal.CENTER else
                 self.get_layout_width() - self.get_occupied_width()
@@ -110,7 +116,7 @@ class Widget:
         if self.parent is None:
             return self.y
         else:
-            return self.get_parent().layout.get_layout_y(self) + self.y + (
+            return self.get_layout_y() + self.y + (
                 0 if self.align_vertical == AlignVertical.TOP else
                 (self.get_layout_height() - self.get_occupied_height()) // 2 if self.align_vertical == AlignVertical.MIDDLE else
                 self.get_layout_height() - self.get_occupied_height()
