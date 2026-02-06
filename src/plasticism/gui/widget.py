@@ -3,7 +3,7 @@ from typing import Optional
 from plasticism.core.event import Event, EventBundle, Processor, UniversalEvent, KeyEvent, TextEvent, LocalEvent, SpreadEvent, GlobalEvent, MouseEvent
 from plasticism.core.assigner import Assigner, AssignerItem
 from plasticism.core.trigger import Trigger
-from plasticism.core.layout import Layout
+from plasticism.core.layout import Layout, AlignHorizontal, AlignVertical, minimum, maximum
 
 class MouseEnter(LocalEvent, MouseEvent):
     pass
@@ -51,6 +51,9 @@ class Widget:
         self.x = 0
         self.y = 0
 
+        self.align_horizontal: AlignHorizontal = AlignHorizontal.LEFT
+        self.align_vertical: AlignVertical = AlignVertical.TOP
+
         self.width: int = 0  # 0 means shrink to min, negative means stretch to max, positive means fixed size
         self.height: int = 0
 
@@ -88,34 +91,48 @@ class Widget:
         self.mouse_leave.connect(self.on_mouse_leave)
 
     def get_x(self) -> int:
-        return self.get_parent().layout.get_layout_x(self) if self.parent else self.x
+        if self.parent is None:
+            return self.x
+        else:
+            return self.get_parent().layout.get_layout_x(self) + self.x + (
+                0 if self.align_horizontal == AlignHorizontal.LEFT else
+                (self.get_parent().get_content_width() - self.get_occupied_width()) // 2 if self.align_horizontal == AlignHorizontal.CENTER else
+                self.get_parent().get_content_width() - self.get_occupied_width()
+                )
     
     def get_y(self) -> int:
-        return self.get_parent().layout.get_layout_y(self) if self.parent else self.y
+        if self.parent is None:
+            return self.y
+        else:
+            return self.get_parent().layout.get_layout_y(self) + self.y + (
+                0 if self.align_vertical == AlignVertical.TOP else
+                (self.get_parent().get_content_height() - self.get_occupied_height()) // 2 if self.align_vertical == AlignVertical.MIDDLE else
+                self.get_parent().get_content_height() - self.get_occupied_height()
+                )
 
     def set_max_width(self, max_width: Optional[int]) -> None:
         self.max_width = max_width
 
     def get_max_width(self) -> int:
-        return self.max_width if self.max_width is not None else self.get_parent().get_content_width() - self.margin_left - self.margin_right
+        return minimum(self.max_width, self.get_parent().get_content_width() - self.margin_left - self.margin_right)
 
     def set_min_width(self, min_width: int) -> None:
         self.min_width = min_width
 
     def get_min_width(self) -> int:
-        return self.min_width
+        return maximum(self.min_width, self.layout.get_content_width() + self.padding_left + self.padding_right)
     
     def set_max_height(self, max_height: Optional[int]) -> None:
         self.max_height = max_height
     
     def get_max_height(self) -> int:
-        return self.max_height if self.max_height is not None else self.get_parent().get_content_height() - self.margin_top - self.margin_bottom
+        return minimum(self.max_height, self.get_parent().get_content_height() - self.margin_top - self.margin_bottom)
     
     def set_min_height(self, min_height: int) -> None:
         self.min_height = min_height
     
     def get_min_height(self) -> int:
-        return self.min_height
+        return maximum(self.min_height, self.layout.get_content_height() + self.padding_top + self.padding_bottom)
     
     def set_max_size(self, max_size: tuple[Optional[int], Optional[int]]) -> None:
         self.set_max_width(max_size[0])
