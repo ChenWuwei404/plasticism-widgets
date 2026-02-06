@@ -46,6 +46,8 @@ class Widget:
 
         # Layout properties
 
+        self.scale_factor = 1.0
+
         self.layout = Layout(self)
 
         self.x = 0
@@ -90,11 +92,17 @@ class Widget:
         self.on_mouse_leave = Trigger(MouseLeave)
         self.mouse_leave.connect(self.on_mouse_leave)
 
+    def get_scale_factor(self) -> float:
+        if self.parent is None:
+            return self.scale_factor
+        else:
+            return self.get_parent().get_scale_factor()
+
     def get_layout_x(self) -> int:
-        return self.get_parent().layout.get_layout_x(self) if self.parent else self.x
+        return self.get_parent().layout.get_layout_x(self) if self.parent else 0
     
     def get_layout_y(self) -> int:
-        return self.get_parent().layout.get_layout_y(self) if self.parent else self.y
+        return self.get_parent().layout.get_layout_y(self) if self.parent else 0
 
     def get_layout_width(self) -> int:
         return self.get_parent().layout.get_layout_width(self) if self.parent else self.get_width()
@@ -212,6 +220,30 @@ class Widget:
     
     def get_content_size(self) -> tuple[int, int]:
         return (self.get_content_width(), self.get_content_height())
+    
+    def get_box_x(self) -> int:
+        return self.get_layout_x() + self.margin_left
+
+    def get_box_y(self) -> int:
+        return self.get_layout_y() + self.margin_top
+
+    def get_visual_x(self) -> int:
+        return int(self.get_x() * self.get_scale_factor())
+    
+    def get_visual_y(self) -> int:
+        return int(self.get_y() * self.get_scale_factor())
+    
+    def get_visual_box_x(self) -> int:
+        return int(self.get_box_x() * self.get_scale_factor())
+    
+    def get_visual_box_y(self) -> int:
+        return int(self.get_box_y() * self.get_scale_factor())
+    
+    def get_visual_width(self) -> int:
+        return int(self.get_width() * self.get_scale_factor())
+    
+    def get_visual_height(self) -> int:
+        return int(self.get_height() * self.get_scale_factor())
 
     def is_mouse_focused(self) -> bool:
         return False
