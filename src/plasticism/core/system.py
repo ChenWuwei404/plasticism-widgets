@@ -7,6 +7,14 @@ from typing import Optional
 if sys.platform == "win32":
     from ctypes import wintypes
     dwmapi = ctypes.windll.dwmapi
+    user32 = ctypes.windll.user32
+
+    def get_window_dpi_scale(hwnd: int) -> float:
+        awareness = ctypes.c_int(2)  # PROCESS_PER_MONITOR_DPI_AWARE
+        ctypes.windll.shcore.SetProcessDpiAwareness(awareness)
+
+        dpi = user32.GetDpiForWindow(hwnd)
+        return dpi / 96.0  # 96 DPI is the default scale (100%)
 
     def _color_to_ref(color: Color) -> int:
         return (color.b << 16) | (color.g << 8) | color.r
