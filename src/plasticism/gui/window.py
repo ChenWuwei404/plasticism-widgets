@@ -11,7 +11,7 @@ from plasticism.core.event import Event, generate_event
 
 import sys
 if sys.platform == "win32":
-    from plasticism.core.system import set_titlebar_color, set_border_color
+    from plasticism.core.system import set_titlebar_color, set_border_color, get_window_dpi_scale
 
 class Window:
     def __init__(self, size: tuple[int, int], widget: Widget, flags: int = 0, vsync: int = 0) -> None:
@@ -27,6 +27,11 @@ class Window:
         if sys.platform == "win32":
             self.set_titlebar_color(None)
             self.set_border_color(Color(64, 64, 64))
+
+    def get_dpi_scale(self) -> float:
+        if sys.platform == "win32":
+            return get_window_dpi_scale(self.hwnd)
+        return 1.0
 
     def set_title(self, title: str) -> None:
         self.title = title
@@ -64,11 +69,15 @@ class Window:
 
     def exec(self) -> None:
         while self.running:
+            self.update_scale_factor()
             for pg_event in pygame.event.get():
                 if pg_event.type == pygame.VIDEORESIZE:
                     self.set_size((pg_event.w, pg_event.h), resized=True)
                 event = generate_event(pg_event)
                 self.root_widget.tunnel_event(event)
+
+    def update_scale_factor(self):
+        self.root_widget.set_scale_factor(self.get_dpi_scale())
 
     
     def exit(self) -> None:
