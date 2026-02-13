@@ -222,28 +222,45 @@ class Widget:
         return (self.get_content_width(), self.get_content_height())
     
     def get_box_x(self) -> int:
-        return self.get_layout_x() + self.margin_left
+        return self.get_x() + self.margin_left
 
     def get_box_y(self) -> int:
-        return self.get_layout_y() + self.margin_top
+        return self.get_y() + self.margin_top
 
-    def get_visual_x(self) -> int:
-        return int(self.get_x() * self.get_scale_factor())
+    def get_relative_x(self) -> int:
+        return self.get_box_x() - self.get_parent().padding_left
     
-    def get_visual_y(self) -> int:
-        return int(self.get_y() * self.get_scale_factor())
+    def get_relative_y(self) -> int:
+        return self.get_box_y() - self.get_parent().padding_top
     
-    def get_visual_box_x(self) -> int:
-        return int(self.get_box_x() * self.get_scale_factor())
+    def get_absolute_x(self) -> int:
+        return self.get_relative_x() + self.get_parent().get_absolute_x() if self.parent else self.get_box_x()
     
-    def get_visual_box_y(self) -> int:
-        return int(self.get_box_y() * self.get_scale_factor())
+    def get_absolute_y(self) -> int:
+        return self.get_relative_y() + self.get_parent().get_absolute_y() if self.parent else self.get_box_y()
     
+
     def get_visual_width(self) -> int:
         return int(self.get_width() * self.get_scale_factor())
     
     def get_visual_height(self) -> int:
         return int(self.get_height() * self.get_scale_factor())
+    
+    def get_visual_size(self) -> tuple[int, int]:
+        return (self.get_visual_width(), self.get_visual_height())
+    
+    def get_visual_relative_x(self) -> int:
+        return int(self.get_relative_x() * self.get_scale_factor())
+    
+    def get_visual_relative_y(self) -> int:
+        return int(self.get_relative_y() * self.get_scale_factor())
+    
+    def get_visual_absolute_x(self) -> int:
+        return int(self.get_absolute_x() * self.get_scale_factor())
+    
+    def get_visual_absolute_y(self) -> int:
+        return int(self.get_absolute_y() * self.get_scale_factor())
+
 
     def is_mouse_focused(self) -> bool:
         return False
