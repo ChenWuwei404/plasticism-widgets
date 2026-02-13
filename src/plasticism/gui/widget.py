@@ -92,6 +92,9 @@ class Widget:
         self.on_mouse_leave = Trigger(MouseLeave)
         self.mouse_leave.connect(self.on_mouse_leave)
 
+    def set_scale_factor(self, scale_factor: float) -> None:
+        self.scale_factor = scale_factor
+
     def get_scale_factor(self) -> float:
         if self.parent is None:
             return self.scale_factor
