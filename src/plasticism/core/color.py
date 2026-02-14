@@ -82,6 +82,48 @@ def oklab_to_rgb_int8(L: float, a: float, b: float) -> tuple[int, int, int]:
     return tuple((round(val * 255) for val in rgb_01))  # type: ignore
 
 
+class Oklab(Color):
+    def __init__(self, L: float, A: float, B: float, alpha: int = 255):
+        self._L = L
+        self._A = A
+        self._B = B
+        self.a = alpha
+        self.update_oklab()
+    
+    def update_oklab(self):
+        super().__init__(*oklab_to_rgb_int8(self.L, self.A, self.B), self.a)
+
+    @property
+    def L(self) -> float:
+        return self._L
+    @L.setter
+    def L(self, value: float):
+        self._L = value
+        self.update_oklab()
+
+    @property
+    def A(self) -> float:
+        return self._A
+    @A.setter
+    def A(self, value: float):
+        self._A = value
+        self.update_oklab()
+
+    @property
+    def B(self) -> float:
+        return self._B
+    @B.setter
+    def B(self, value: float):
+        self._B = value
+        self.update_oklab()
+
+    @property
+    def oklab(self) -> tuple:
+        return (self.L, self.A, self.B)
+
+    def __repr__(self) -> str:
+        return f"Oklab({self.L}, {self.A}, {self.B}, {self.a})"
+
 class Oklch(Color):
     def __init__(self, L: float, C: float, H: float, a: int = 255):
         self._L = L
