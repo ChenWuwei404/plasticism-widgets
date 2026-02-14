@@ -1,4 +1,4 @@
-from typing import Any, Generic, TypeVar
+from typing import Generic, TypeVar
 
 from dataclasses import dataclass
 
@@ -6,7 +6,7 @@ from plasticism.core.color import Color, Oklch
 
 T = TypeVar('T')
 
-class Item[T]:
+class Item(Generic[T]):
     def __init__(self, *args: T) -> None:
         self.args = args
 
