@@ -12,6 +12,8 @@ from plasticism.core.event import Event, generate_event
 import sys
 if sys.platform == "win32":
     from plasticism.core.system import set_titlebar_color, set_border_color, get_window_dpi_scale
+elif sys.platform == "linux":
+    from plasticism.core.system import get_window_dpi_scale
 
 class Window:
     def __init__(self, size: tuple[int, int], widget: Widget, flags: int = 0, vsync: int = 0) -> None:
@@ -45,6 +47,8 @@ class Window:
         """
         Only available on Windows.
         """
+        if sys.platform != "win32":
+            return
         self.titlebar_color = color
         set_titlebar_color(self.hwnd, color)
 
@@ -52,6 +56,8 @@ class Window:
         """
         Only available on Windows.
         """
+        if sys.platform != "win32":
+            return
         self.border_color = color
         set_border_color(self.hwnd, color)
 

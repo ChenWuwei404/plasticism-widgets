@@ -54,8 +54,20 @@ if sys.platform == "win32":
             print(e)
 
 elif sys.platform == "linux":
-    pass
-    # TODO: Implement for Linux platforms
+    import subprocess
+    def get_window_dpi_scale(hwnd: int) -> float:
+        try:
+            result = subprocess.run(
+                ['xrdb', '-query'],
+                capture_output=True, text=True
+            )
+            for line in result.stdout.split('\n'):
+                if 'Xft.dpi' in line:
+                    dpi = int(line.split(':')[-1].strip())
+                    return dpi / 96.0
+        except Exception:
+            pass
+        return 1.0
 
 elif sys.platform == "macos":
     pass
