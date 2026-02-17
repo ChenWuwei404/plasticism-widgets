@@ -3,23 +3,18 @@ import numpy as np
 
 from pygame.color import Color
 
-def oklch_to_rgb(L: float, C: float, H: float, clamp: bool=True, decimals: int=3) -> tuple[float, float, float]:
+def oklab_to_rgb(L: float, a: float, b: float, clamp: bool=True, decimals: int=3) -> tuple[float, float, float]:
     """
-    Converts an OKLCH color to an RGB color.
+    Converts an OKLab color to an RGB color.
 
     :param L: Lightness `[0.0, 1.0]`
-    :param C: Chroma `[0.0, 0.4]`
-    :param H: Hue `[0.0, 360.0]`
+    :param a: a* `[-0.4, 0.4]`
+    :param b: b* `[-0.4, 0.4]`
     :param clamp: Whether to clamp the output to [0.0, 1.0)
     :param decimals: Number of decimal places to round to
     :return: Color in RGB format [0.0, 1.0) if clamp
     """
 
-    # OKLCH to OKLab
-    H_rad = math.radians(H)
-    a = C * math.cos(H_rad)
-    b = C * math.sin(H_rad)
-    
     # OKLab to linear LMS
     # M1^{-1}
     M1_inv = np.array([
@@ -56,14 +51,78 @@ def oklch_to_rgb(L: float, C: float, H: float, clamp: bool=True, decimals: int=3
         rgb = np.clip(rgb, 0.0, 1.0)
     
     rgb_01 = tuple(round(val, decimals) for val in rgb)
-    # hex_str = f"#{rgb_255[0]:02x}{rgb_255[1]:02x}{rgb_255[2]:02x}"
     
     return rgb_01
+
+def oklch_to_rgb(L: float, C: float, H: float, clamp: bool=True, decimals: int=3) -> tuple[float, float, float]:
+    """
+    Converts an OKLCH color to an RGB color.
+
+    :param L: Lightness `[0.0, 1.0]`
+    :param C: Chroma `[0.0, 0.4]`
+    :param H: Hue `[0.0, 360.0]`
+    :param clamp: Whether to clamp the output to [0.0, 1.0)
+    :param decimals: Number of decimal places to round to
+    :return: Color in RGB format [0.0, 1.0) if clamp
+    """
+
+    # OKLCH to OKLab
+    H_rad = math.radians(H)
+    a = C * math.cos(H_rad)
+    b = C * math.sin(H_rad)
+    
+    return oklab_to_rgb(L, a, b, clamp=clamp, decimals=decimals)
 
 def oklch_to_rgb_int8(L: float, C: float, H: float) -> tuple[int, int, int]:
     rgb_01 = oklch_to_rgb(L, C, H, clamp=True)
     return tuple((round(val * 255) for val in rgb_01))  # type: ignore
 
+def oklab_to_rgb_int8(L: float, a: float, b: float) -> tuple[int, int, int]:
+    rgb_01 = oklab_to_rgb(L, a, b, clamp=True)
+    return tuple((round(val * 255) for val in rgb_01))  # type: ignore
+
+
+class Oklab(Color):
+    def __init__(self, L: float, A: float, B: float, alpha: int = 255):
+        self._L = L
+        self._A = A
+        self._B = B
+        self.a = alpha
+        self.update_oklab()
+    
+    def update_oklab(self):
+        super().__init__(*oklab_to_rgb_int8(self.L, self.A, self.B), self.a)
+
+    @property
+    def L(self) -> float:
+        return self._L
+    @L.setter
+    def L(self, value: float):
+        self._L = value
+        self.update_oklab()
+
+    @property
+    def A(self) -> float:
+        return self._A
+    @A.setter
+    def A(self, value: float):
+        self._A = value
+        self.update_oklab()
+
+    @property
+    def B(self) -> float:
+        return self._B
+    @B.setter
+    def B(self, value: float):
+        self._B = value
+        self.update_oklab()
+
+    @property
+    def oklab(self) -> tuple:
+        return (self.L, self.A, self.B)
+
+    def __repr__(self) -> str:
+        return f"Oklab({self.L}, {self.A}, {self.B}, {self.a})"
 
 class Oklch(Color):
     def __init__(self, L: float, C: float, H: float, a: int = 255):
