@@ -251,10 +251,10 @@ class Widget:
         return self.get_y() + self.margin_top
 
     def get_relative_x(self) -> int:
-        return self.get_box_x() - self.get_parent().padding_left if self.parent else self.get_box_x()
+        return self.get_box_x() + self.get_parent().padding_left if self.parent else 0
     
     def get_relative_y(self) -> int:
-        return self.get_box_y() - self.get_parent().padding_top if self.parent else self.get_box_y()
+        return self.get_box_y() + self.get_parent().padding_top if self.parent else 0
     
     def get_absolute_x(self) -> int:
         return (self.get_relative_x() + self.get_parent().get_absolute_x()) if self.parent else self.get_box_x()
