@@ -146,6 +146,12 @@ class Widget:
                 (self.get_layout_height() - self.get_occupied_height()) // 2 if self.align_vertical == AlignVertical.MIDDLE else
                 self.get_layout_height() - self.get_occupied_height()
                 )
+        
+    def set_x(self, x: int) -> None:
+        self.x = x
+
+    def set_y(self, y: int) -> None:
+        self.y = y
 
     def set_max_width(self, max_width: Optional[int]) -> None:
         self.max_width = max_width
