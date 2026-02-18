@@ -22,9 +22,9 @@ class Window:
         pygame.init() if not pygame.get_init() else None
         self.set_root_widget(widget)
 
-        self.set_size(size)
-        self.screen = display.set_mode(self.size, flags=flags, vsync=vsync)
+        self.screen = display.set_mode(size, flags=flags, vsync=vsync)
         self.hwnd = display.get_wm_info()["window"]
+        self.set_size(size)
         self.set_title("Plasticism Window")
         self.set_icon(Surface((0, 0), SRCALPHA))
         self.set_running(True)
@@ -66,7 +66,7 @@ class Window:
 
     def set_size(self, size: tuple[int, int], resized: bool = True) -> None:
         self.size = size
-        self.root_widget.set_max_size((size[0] - self.root_widget.margin_left - self.root_widget.margin_right, size[1] - self.root_widget.margin_top - self.root_widget.margin_bottom))
+        self.root_widget.set_max_size((int((size[0] - self.root_widget.margin_left - self.root_widget.margin_right) / self.get_dpi_scale()), int((size[1] - self.root_widget.margin_top - self.root_widget.margin_bottom) / self.get_dpi_scale())))
         display.set_mode(size) if not resized else None
 
     def set_running(self, running: bool) -> None:
@@ -84,6 +84,7 @@ class Window:
 
     def update_scale_factor(self):
         self.root_widget.set_scale_factor(self.get_dpi_scale())
+        self.set_size(self.size, resized=True)
 
     def close(self) -> None:
         self.set_running(False)
