@@ -7,6 +7,14 @@ from typing import Optional
 if sys.platform == "win32":
     from ctypes import wintypes
     dwmapi = ctypes.windll.dwmapi
+    user32 = ctypes.windll.user32
+
+    def get_window_dpi_scale(hwnd: int) -> float:
+        awareness = ctypes.c_int(2)  # PROCESS_PER_MONITOR_DPI_AWARE
+        ctypes.windll.shcore.SetProcessDpiAwareness(awareness)
+
+        dpi = user32.GetDpiForWindow(hwnd)
+        return dpi / 96.0  # 96 DPI is the default scale (100%)
 
     def _color_to_ref(color: Color) -> int:
         return (color.b << 16) | (color.g << 8) | color.r
@@ -46,8 +54,20 @@ if sys.platform == "win32":
             print(e)
 
 elif sys.platform == "linux":
-    pass
-    # TODO: Implement for Linux platforms
+    import subprocess
+    def get_window_dpi_scale(hwnd: int) -> float:
+        try:
+            result = subprocess.run(
+                ['xrdb', '-query'],
+                capture_output=True, text=True
+            )
+            for line in result.stdout.split('\n'):
+                if 'Xft.dpi' in line:
+                    dpi = int(line.split(':')[-1].strip())
+                    return dpi / 96.0
+        except Exception:
+            pass
+        return 1.0
 
 elif sys.platform == "macos":
     pass
