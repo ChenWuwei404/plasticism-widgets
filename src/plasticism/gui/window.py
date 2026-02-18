@@ -65,7 +65,7 @@ class Window:
 
     def set_size(self, size: tuple[int, int], resized: bool = True) -> None:
         self.size = size
-        self.root_widget.set_max_size(size)
+        self.root_widget.set_max_size((size[0] - self.root_widget.margin_left - self.root_widget.margin_right, size[1] - self.root_widget.margin_top - self.root_widget.margin_bottom))
         display.set_mode(size) if not resized else None
 
     def set_running(self, running: bool) -> None:
