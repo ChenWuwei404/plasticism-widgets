@@ -5,6 +5,9 @@ from plasticism.core.assigner import Assigner, AssignerItem
 from plasticism.core.trigger import Trigger
 from plasticism.core.layout import Layout, AlignHorizontal, AlignVertical, minimum, maximum
 
+from pygame import Surface, Rect
+from plasticism.core.surface_clip import SurfaceClip
+
 class MouseEnter(LocalEvent, MouseEvent):
     pass
 
@@ -91,6 +94,10 @@ class Widget:
         self.mouse_enter.connect(self.on_mouse_enter)
         self.on_mouse_leave = Trigger(MouseLeave)
         self.mouse_leave.connect(self.on_mouse_leave)
+
+        # Rendering properties
+
+        self.visible = True
 
     def set_scale_factor(self, scale_factor: float) -> None:
         self.scale_factor = scale_factor
@@ -375,3 +382,93 @@ class Widget:
             focused_child = next((child for child in self.get_children() if child.is_keyboard_focused()), None)
             if focused_child:
                 focused_child.tunnel_event(event)
+
+    
+    def draw(self, clip: SurfaceClip) -> None:
+        """
+        Draw the widget on the given clip.
+
+        Draw order:
+
+        - `draw_expand`: draw something out of the widget's own area, like shadows or something.
+        - `draw_self`: draw the widget itself on the given clip
+            - `draw_background`
+            - `draw_foreground`
+                - `draw_content`
+                - `draw_children`
+            - `draw_border`
+
+        :param clip: a SurfaceClip of the widget's parent to draw on
+        :type clip: SurfaceClip
+        """
+        self.draw_expand(clip)
+        self_clip = clip.subclip(Rect(self.get_visual_relative_x(), self.get_visual_relative_y(), self.get_visual_width(), self.get_visual_height()))
+        self.draw_self(self_clip)
+
+    def draw_expand(self, clip: SurfaceClip) -> None:
+        """
+        draw something out of the widget's own area, like shadows or something.
+        
+        :param self: 说明
+        :param clip: 说明
+        :type clip: SurfaceClip
+        """
+        pass
+
+    def draw_self(self, clip: SurfaceClip) -> None:
+        """
+        Draw the widget itself on the given clip.
+
+        :param clip: a SurfaceClip of the widget itself
+        :type clip: SurfaceClip
+        """
+        self.draw_background(clip)
+        self.draw_foreground(clip)
+        self.draw_border(clip)
+
+    def draw_background(self, clip: SurfaceClip) -> None:
+        """
+        Draw the background of the widget on the given clip.
+
+        :param clip: a SurfaceClip of the widget itself
+        :type clip: SurfaceClip
+        """
+        pass
+
+    def draw_foreground(self, clip: SurfaceClip) -> None:
+        """
+        Draw the foreground of the widget on the given clip.
+
+        :param clip: a SurfaceClip of the widget itself
+        :type clip: SurfaceClip
+        """
+        self.draw_content(clip)
+        self.draw_children(clip)
+
+    def draw_content(self, clip: SurfaceClip) -> None:
+        """
+        Draw the content of the widget on the given clip.
+
+        :param clip: a SurfaceClip of the widget itself
+        :type clip: SurfaceClip
+        """
+        pass
+
+    def draw_children(self, clip: SurfaceClip) -> None:
+        """
+        Draw the children of the widget on the given clip.
+
+        :param clip: a SurfaceClip of the widget itself to draw children on
+        :type clip: SurfaceClip
+        """
+        for child in self.get_children():
+            child.draw(clip) if child.visible else None
+
+    def draw_border(self, clip: SurfaceClip) -> None:
+        """
+        Draw the border of the widget on the given clip.
+
+        :param clip: a SurfaceClip of the widget itself
+        :type clip: SurfaceClip
+        """
+        pass
