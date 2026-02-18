@@ -151,7 +151,7 @@ class Widget:
         self.max_width = max_width
 
     def get_max_width(self) -> int:
-        return minimum(self.max_width, self.get_layout_width() - self.margin_left - self.margin_right)
+        return minimum(self.max_width, (self.get_layout_width() - self.margin_left - self.margin_right) if self.parent else None)
 
     def set_min_width(self, min_width: int) -> None:
         self.min_width = min_width
@@ -163,7 +163,7 @@ class Widget:
         self.max_height = max_height
     
     def get_max_height(self) -> int:
-        return minimum(self.max_height, self.get_layout_height() - self.margin_top - self.margin_bottom)
+        return minimum(self.max_height, (self.get_layout_height() - self.margin_top - self.margin_bottom) if self.parent else None)
     
     def set_min_height(self, min_height: int) -> None:
         self.min_height = min_height
@@ -245,16 +245,16 @@ class Widget:
         return self.get_y() + self.margin_top
 
     def get_relative_x(self) -> int:
-        return self.get_box_x() - self.get_parent().padding_left
+        return self.get_box_x() - self.get_parent().padding_left if self.parent else self.get_box_x()
     
     def get_relative_y(self) -> int:
-        return self.get_box_y() - self.get_parent().padding_top
+        return self.get_box_y() - self.get_parent().padding_top if self.parent else self.get_box_y()
     
     def get_absolute_x(self) -> int:
-        return self.get_relative_x() + self.get_parent().get_absolute_x() if self.parent else self.get_box_x()
+        return (self.get_relative_x() + self.get_parent().get_absolute_x()) if self.parent else self.get_box_x()
     
     def get_absolute_y(self) -> int:
-        return self.get_relative_y() + self.get_parent().get_absolute_y() if self.parent else self.get_box_y()
+        return (self.get_relative_y() + self.get_parent().get_absolute_y()) if self.parent else self.get_box_y()
     
 
     def get_visual_width(self) -> int:
