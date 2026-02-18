@@ -5,9 +5,11 @@ import pygame
 from pygame import display
 from pygame import Surface, SRCALPHA
 from pygame import Color
+from pygame import Rect
 
 from plasticism.gui.widget import Widget
 from plasticism.core.event import Event, generate_event
+from plasticism.core.surface_clip import SurfaceClip
 
 import sys
 if sys.platform == "win32":
@@ -21,7 +23,7 @@ class Window:
         self.set_root_widget(widget)
 
         self.set_size(size)
-        display.set_mode(self.size, flags=flags, vsync=vsync)
+        self.screen = display.set_mode(self.size, flags=flags, vsync=vsync)
         self.hwnd = display.get_wm_info()["window"]
         self.set_title("Plasticism Window")
         self.set_icon(Surface((0, 0), SRCALPHA))
@@ -75,16 +77,33 @@ class Window:
 
     def exec(self) -> None:
         while self.running:
-            self.update_scale_factor()
-            for pg_event in pygame.event.get():
-                if pg_event.type == pygame.VIDEORESIZE:
-                    self.set_size((pg_event.w, pg_event.h), resized=True)
-                event = generate_event(pg_event)
-                self.root_widget.tunnel_event(event)
+            self.process()
+            self.update()
+            self.render()
 
     def update_scale_factor(self):
         self.root_widget.set_scale_factor(self.get_dpi_scale())
 
+    def close(self) -> None:
+        self.set_running(False)
+
+    def get_main_clip(self) -> SurfaceClip:
+        return SurfaceClip(self.screen, Rect(0, 0, *self.size))
+
+    def render(self) -> None:
+        self.root_widget.draw(self.get_main_clip())
+        display.flip()
+
+    def process(self) -> None:
+        self.update_scale_factor()
+        for pg_event in pygame.event.get():
+            if pg_event.type == pygame.VIDEORESIZE:
+                self.set_size((pg_event.w, pg_event.h), resized=True)
+            event = generate_event(pg_event)
+            self.root_widget.tunnel_event(event)
+
+    def update(self) -> None:
+        self.root_widget.update()
     
     def exit(self) -> None:
         display.quit()
