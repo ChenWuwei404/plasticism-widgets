@@ -4,6 +4,10 @@ from enum import Enum
 if TYPE_CHECKING:
     from plasticism.gui.widget import Widget
 
+class Position(Enum):
+    STATIC = 0
+    ABSOLUTE = 1
+
 class AlignHorizontal(Enum):
     LEFT = 0
     CENTER = 1

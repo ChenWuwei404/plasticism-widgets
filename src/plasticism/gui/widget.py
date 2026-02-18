@@ -3,7 +3,7 @@ from typing import Optional
 from plasticism.core.event import Event, EventBundle, Processor, UniversalEvent, KeyEvent, TextEvent, LocalEvent, SpreadEvent, GlobalEvent, MouseEvent
 from plasticism.core.assigner import Assigner, AssignerItem
 from plasticism.core.trigger import Trigger
-from plasticism.core.layout import Layout, AlignHorizontal, AlignVertical, minimum, maximum
+from plasticism.core.layout import Layout, Position, AlignHorizontal, AlignVertical, minimum, maximum
 
 from pygame import Surface, Rect
 from plasticism.core.surface_clip import SurfaceClip
@@ -55,6 +55,7 @@ class Widget:
 
         self.x = 0
         self.y = 0
+        self.position: Position = Position.STATIC
 
         self.align_horizontal: AlignHorizontal = AlignHorizontal.LEFT
         self.align_vertical: AlignVertical = AlignVertical.TOP
