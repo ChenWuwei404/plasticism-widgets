@@ -30,7 +30,7 @@ class Window:
         self.set_running(True)
         if sys.platform == "win32":
             self.set_titlebar_color(None)
-            self.set_border_color(Color(64, 64, 64))
+            # self.set_border_color(Color(64, 64, 64))
 
     def get_dpi_scale(self) -> float:
         if sys.platform == "win32":
