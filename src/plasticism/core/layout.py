@@ -5,6 +5,10 @@ if TYPE_CHECKING:
     from plasticism.gui.widget import Widget
 
 class Position(Enum):
+    """
+    STATIC: The position of the widget is determined by the layout of its parent widget. It will be arranged in the order it is added to the parent widget.
+    ABSOLUTE: The position of the widget is determined by its own layout. It will be arranged according to the coordinates returned by the `get_layout`-series methods.
+    """
     STATIC = 0
     ABSOLUTE = 1
 
@@ -27,6 +31,10 @@ def maximum(*args: Optional[int]) -> int:
 class Layout:
     """
     Layout defines how the content of a widget is arranged and how the layout of its children widgets is determined.
+
+    Child widgets call `get_layout`-series methods to get their layout areas.
+
+    Parent widgets call `get_content`-series methods to get the minimum required content area for their children widgets, and call `update` method to update the layout when necessary.
     """
     def __init__(self, widget: 'Widget') -> None:
         self.widget = widget
