@@ -44,13 +44,13 @@ class Layout:
 
     def get_content_width(self) -> int:
         """
-        Called by a widget to get mininum required width of the content area.
+        Called by a widget to get minimum required width of the content area.
         """
         return 0
     
     def get_content_height(self) -> int:
         """
-        Called by a widget to get mininum required height of the content area.
+        Called by a widget to get minimum required height of the content area.
         """
         return 0
     
