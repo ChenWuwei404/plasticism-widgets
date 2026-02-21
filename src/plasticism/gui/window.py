@@ -31,6 +31,7 @@ class Window:
         if sys.platform == "win32":
             self.set_titlebar_color(None)
             # self.set_border_color(Color(64, 64, 64))
+        self.clock = pygame.time.Clock()
 
     def get_dpi_scale(self) -> float:
         if sys.platform == "win32":
@@ -78,7 +79,7 @@ class Window:
     def exec(self) -> None:
         while self.running:
             self.process()
-            self.update()
+            self.update(self.clock.tick() / 1000)
             self.render()
 
     def update_scale_factor(self):
@@ -102,8 +103,8 @@ class Window:
             event = generate_event(pg_event)
             self.root_widget.tunnel_event(event)
 
-    def update(self) -> None:
-        self.root_widget.update()
+    def update(self, dt: float) -> None:
+        self.root_widget.update(dt)
     
     def exit(self) -> None:
         display.quit()

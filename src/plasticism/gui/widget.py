@@ -100,10 +100,10 @@ class Widget:
 
         self.visible = True
 
-    def update(self) -> None:
+    def update(self, dt: float) -> None:
         self.layout.update()
         for child in self.children:
-            child.update()
+            child.update(dt)
         
 
     def set_scale_factor(self, scale_factor: float) -> None:
