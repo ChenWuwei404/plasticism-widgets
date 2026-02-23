@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 class Position(Enum):
     """
     STATIC: The position of the widget is determined by the layout of its parent widget. It will be arranged in the order it is added to the parent widget.
-    ABSOLUTE: The position of the widget is determined by its own layout. It will be arranged according to the coordinates returned by the `get_layout`-series methods.
+    ABSOLUTE: The position of the widget is determined by its own `x` and `y`. It will be arranged according to the coordinates returned by the `get_layout`-series methods.
     """
     STATIC = 0
     ABSOLUTE = 1
