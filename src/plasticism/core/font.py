@@ -66,17 +66,17 @@ class FontSeries:
         else:
             return self.get_regular()
     
-    def render(self, text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0) -> Surface:
+    def render(self, text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Surface:
         font = self.get_font(italic=italic, bold=bold)
         width = font.get_rect(text).width
         height = self.get_height(size)
         surface = Surface((width, height), SRCALPHA)
-        font.render_to(surface, (0, 0), text, color, background, size=size)
+        font.render_to(surface, (0, 0), text, color, background, size=size * scale)
         return surface
     
-    def render_to(self, surface: Surface, pos: tuple[int, int], text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0) -> Rect:
+    def render_to(self, surface: Surface, pos: tuple[int, int], text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Rect:
         font = self.get_font(italic=italic, bold=bold)
-        return font.render_to(surface, pos, text, color, background, size=size)
+        return font.render_to(surface, pos, text, color, background, size=size * scale)
     
     def get_height(self, size: float = 0) -> int:
         return self.regular.get_sized_height(size)
