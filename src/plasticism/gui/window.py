@@ -17,8 +17,14 @@ if sys.platform == "win32":
 elif sys.platform == "linux":
     from plasticism.core.system import get_window_dpi_scale
 
+import os
+
 class Window:
     def __init__(self, size: tuple[int, int], widget: Widget, flags: int = 0, vsync: int = 0) -> None:
+        os.environ["SDL_IME_SHOW_UI"] = "1"
+        os.environ["SDL_WINDOWS_DPI_AWARENESS"] = "permonitor"
+        print(os.environ.items())
+
         pygame.init() if not pygame.get_init() else None
         self.set_root_widget(widget)
 
@@ -32,6 +38,7 @@ class Window:
             self.set_titlebar_color(None)
             # self.set_border_color(Color(64, 64, 64))
         self.clock = pygame.time.Clock()
+
 
     def get_dpi_scale(self) -> float:
         if sys.platform == "win32":
