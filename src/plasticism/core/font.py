@@ -35,8 +35,8 @@ class Metrics:
         return sum(m[5] for m in self.metrics if m)
     
 @lru_cache(256)
-def get_metrics(font: Font, text: str) -> Metrics:
-    return Metrics(font.get_metrics(text))
+def get_metrics(font: Font, text: str, size: int, scale: float) -> Metrics:
+    return Metrics(font.get_metrics(text, size * scale))
 
 class FontSeries:
     def __init__(self, regular: Font, bold: Optional[Font] = None, italic: Optional[Font] = None, bold_italic: Optional[Font] = None) -> None:
@@ -99,42 +99,42 @@ class FontSeries:
     
     def render(self, text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Surface:
         font = self.get_font(italic=italic, bold=bold)
-        metric = get_metrics(font, text)
+        metric = get_metrics(font, text, size, scale)
         width = metric.get_advance_x()
-        height = self.get_height(size)
+        height = self.get_height(size, scale)
         surface = Surface((width, height), SRCALPHA)
-        font.render_to(surface, (metric.get_min_x(), self.get_ascender(size) - metric.get_max_y()), text, color, background, size=size * scale)
+        font.render_to(surface, (metric.get_min_x(), self.get_ascender(size, scale) - metric.get_max_y()), text, color, background, size=size * scale)
         return surface
     
     def render_to(self, surface: SurfaceLike, pos: tuple[int, int], text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Rect:
         font = self.get_font(italic=italic, bold=bold)
-        metric = get_metrics(font, text)
+        metric = get_metrics(font, text, size, scale)
         if background:
             width = metric.get_advance_x()
-            height = self.get_height(size)
+            height = self.get_height(size, scale)
             surface.fill(background, (pos, (width, height)))
         if isinstance(surface, Surface):
-            font.render_to(surface, (pos[0] + metric.get_min_x(), pos[1] + self.get_ascender(size) - metric.get_max_y()), text, color, size=size * scale)
+            font.render_to(surface, (pos[0] + metric.get_min_x(), pos[1] + self.get_ascender(size, scale) - metric.get_max_y()), text, color, size=size * scale)
         else:
             offset_x, offset_y = surface.get_blit_offset()
-            font.render_to(surface.surface, (pos[0] + metric.get_min_x() + offset_x, pos[1] + self.get_ascender(size) - metric.get_max_y() + offset_y), text, color, size=size * scale)
-        return Rect(pos, (metric.get_advance_x(), self.get_height(size)))
+            font.render_to(surface.surface, (pos[0] + metric.get_min_x() + offset_x, pos[1] + self.get_ascender(size, scale) - metric.get_max_y() + offset_y), text, color, size=size * scale)
+        return Rect(pos, (metric.get_advance_x(), self.get_height(size, scale)))
     
     def get_rect(self, text: str, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Rect:
         font = self.get_font(italic=italic, bold=bold)
-        metric = get_metrics(font, text)
+        metric = get_metrics(font, text, size, scale)
         width = metric.get_advance_x()
-        height = self.get_height(size)
+        height = self.get_height(size, scale)
         return Rect((0, 0), (width, height))
 
-    def get_height(self, size: float = 0) -> int:
-        return self.regular.get_sized_height(size)
+    def get_height(self, size: float = 0, scale: float = 1.0) -> int:
+        return self.regular.get_sized_height(size * scale)
     
-    def get_ascender(self, size: float = 0) -> int:
-        return self.regular.get_sized_ascender(size)
+    def get_ascender(self, size: float = 0, scale: float = 1.0) -> int:
+        return self.regular.get_sized_ascender(size * scale)
     
-    def get_descender(self, size: float = 0) -> int:
-        return self.regular.get_sized_descender(size)
+    def get_descender(self, size: float = 0, scale: float = 1.0) -> int:
+        return self.regular.get_sized_descender(size * scale)
     
     def support(self, text: str) -> bool:
         return all(self.regular.get_metrics(char)[0] is not None for char in text)
@@ -170,7 +170,7 @@ class FontFamily:
     def render(self, text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Surface:
         elements = parse(text)
         width = sum(self.find_font(element).get_rect(element, italic=italic, bold=bold, size=size, scale=scale).width for element in elements)
-        height = self.get_height(size)
+        height = self.get_height(size, scale)
         surface = Surface((width, height), SRCALPHA)
         self.render_to(surface, (0, 0), text, color, background, italic=italic, bold=bold, size=size, scale=scale)
         return surface
@@ -180,33 +180,33 @@ class FontFamily:
         x = pos[0]
         if background:
             width = sum(self.find_font(element).get_rect(element, italic=italic, bold=bold, size=size, scale=scale).width for element in elements)
-            height = self.get_height(size)
+            height = self.get_height(size, scale)
             surface.fill(background, (pos, (width, height)))
         for element in elements:
             font_series = self.find_font(element)
             x += font_series.render_to(surface, (x, pos[1]), element, color, size=size, scale=scale).width
-        return Rect(pos, (x - pos[0], self.get_height(size)))
+        return Rect(pos, (x - pos[0], self.get_height(size, scale)))
     
     def get_rect(self, text: str, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Rect:
         elements = parse(text)
         width = sum(self.find_font(element).get_rect(element, italic=italic, bold=bold, size=size, scale=scale).width for element in elements)
-        height = self.get_height(size)
+        height = self.get_height(size, scale)
         return Rect((0, 0), (width, height))
 
-    def get_height(self, size: float = 0) -> int:
-        return max(font_series.get_height(size) for font_series in self.font_series)
+    def get_height(self, size: float = 0, scale: float = 1.0) -> int:
+        return max(font_series.get_height(size, scale) for font_series in self.font_series)
     
-    def get_ascender(self, size: float = 0) -> int:
-        return max(font_series.get_ascender(size) for font_series in self.font_series)
+    def get_ascender(self, size: float = 0, scale: float = 1.0) -> int:
+        return max(font_series.get_ascender(size, scale) for font_series in self.font_series)
     
-    def get_descender(self, size: float = 0) -> int:
-        return min(font_series.get_descender(size) for font_series in self.font_series)
+    def get_descender(self, size: float = 0, scale: float = 1.0) -> int:
+        return min(font_series.get_descender(size, scale) for font_series in self.font_series)
 
 FontLike = FontSeries | FontFamily
 
 import sys
 if sys.platform == 'win32':
-    default_font = FontSeries.from_names(16, 'SimHei')
+    default_font = FontFamily.from_names(16, ('Arial', None, None, None), ('思源黑体 CN Regular', None, None, None))
 elif sys.platform == 'darwin':
     default_font = FontSeries.from_names(16, 'PingFang SC')
 else:
