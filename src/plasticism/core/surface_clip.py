@@ -1,9 +1,9 @@
 from typing import Union, Optional
+from pygame.typing import Point
 
 from pygame import Surface, Rect, Vector2, Color
 
 SurfaceLike = Union[Surface, 'SurfaceClip']
-Point = tuple[float, float]
 
 def offset_rect(rect: Rect, offset: Vector2) -> Rect:
     return Rect(rect.x + offset.x, rect.y + offset.y, rect.width, rect.height)
