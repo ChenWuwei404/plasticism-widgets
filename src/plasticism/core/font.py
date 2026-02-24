@@ -10,6 +10,7 @@ from pygame import Surface, Rect, SRCALPHA
 from functools import lru_cache
 
 from plasticism.core.word import Element, parse
+from plasticism.core.surface_clip import SurfaceLike
 
 class Metrics:
     def __init__(self, metrics: Sequence[Optional[Tuple[int, int, int, int, float, float]]]) -> None:
@@ -105,15 +106,18 @@ class FontSeries:
         font.render_to(surface, (metric.get_min_x(), self.get_ascender(size) - metric.get_max_y()), text, color, background, size=size * scale)
         return surface
     
-    def render_to(self, surface: Surface, pos: tuple[int, int], text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Rect:
+    def render_to(self, surface: SurfaceLike, pos: tuple[int, int], text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Rect:
         font = self.get_font(italic=italic, bold=bold)
         metric = get_metrics(font, text)
         if background:
             width = metric.get_advance_x()
             height = self.get_height(size)
             surface.fill(background, (pos, (width, height)))
-        rect = font.render_to(surface, (pos[0] + metric.get_min_x(), pos[1] + self.get_ascender(size) - metric.get_max_y()), text, color, size=size * scale)
-        # draw.rect(surface, (255, 0, 0), rect, 1)  # debug: show rect of rendered text
+        if isinstance(surface, Surface):
+            font.render_to(surface, (pos[0] + metric.get_min_x(), pos[1] + self.get_ascender(size) - metric.get_max_y()), text, color, size=size * scale)
+        else:
+            offset_x, offset_y = surface.get_blit_offset()
+            font.render_to(surface.surface, (pos[0] + metric.get_min_x() + offset_x, pos[1] + self.get_ascender(size) - metric.get_max_y() + offset_y), text, color, size=size * scale)
         return Rect(pos, (metric.get_advance_x(), self.get_height(size)))
     
     def get_rect(self, text: str, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Rect:
@@ -171,7 +175,7 @@ class FontFamily:
         self.render_to(surface, (0, 0), text, color, background, italic=italic, bold=bold, size=size, scale=scale)
         return surface
     
-    def render_to(self, surface: Surface, pos: tuple[int, int], text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Rect:
+    def render_to(self, surface: SurfaceLike, pos: tuple[int, int], text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Rect:
         elements = parse(text)
         x = pos[0]
         if background:
@@ -197,6 +201,8 @@ class FontFamily:
     
     def get_descender(self, size: float = 0) -> int:
         return min(font_series.get_descender(size) for font_series in self.font_series)
+
+FontLike = FontSeries | FontFamily
 
 import sys
 if sys.platform == 'win32':
