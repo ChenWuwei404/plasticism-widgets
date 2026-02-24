@@ -79,8 +79,10 @@ class Window:
     def exec(self) -> None:
         while self.running:
             self.process()
-            self.update(self.clock.tick() / 1000)
+            self.update(self.clock.get_time() / 1000.0)
             self.render()
+            # self.clock.tick()
+            # print(f"FPS: {self.clock.get_fps():.2f}")
 
     def update_scale_factor(self):
         self.root_widget.set_scale_factor(self.get_dpi_scale())
