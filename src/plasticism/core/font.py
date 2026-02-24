@@ -7,6 +7,8 @@ freetype.init()
 from pygame.freetype import Font, SysFont, match_font
 from pygame import Surface, Rect, SRCALPHA
 
+from functools import lru_cache
+
 from plasticism.core.word import Element, parse
 
 class Metrics:
@@ -31,6 +33,7 @@ class Metrics:
     def get_advance_y(self) -> float:
         return sum(m[5] for m in self.metrics if m)
     
+@lru_cache(256)
 def get_metrics(font: Font, text: str) -> Metrics:
     return Metrics(font.get_metrics(text))
 
@@ -105,7 +108,11 @@ class FontSeries:
     def render_to(self, surface: Surface, pos: tuple[int, int], text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Rect:
         font = self.get_font(italic=italic, bold=bold)
         metric = get_metrics(font, text)
-        rect = font.render_to(surface, (pos[0] + metric.get_min_x(), pos[1] + self.get_ascender(size) - metric.get_max_y()), text, color, background, size=size * scale)
+        if background:
+            width = metric.get_advance_x()
+            height = self.get_height(size)
+            surface.fill(background, (pos, (width, height)))
+        rect = font.render_to(surface, (pos[0] + metric.get_min_x(), pos[1] + self.get_ascender(size) - metric.get_max_y()), text, color, size=size * scale)
         # draw.rect(surface, (255, 0, 0), rect, 1)  # debug: show rect of rendered text
         return Rect(pos, (metric.get_advance_x(), self.get_height(size)))
     
@@ -161,18 +168,19 @@ class FontFamily:
         width = sum(self.find_font(element).get_rect(element, italic=italic, bold=bold, size=size, scale=scale).width for element in elements)
         height = self.get_height(size)
         surface = Surface((width, height), SRCALPHA)
-        x = 0
-        for element in elements:
-            font_series = self.find_font(element)
-            x += font_series.render_to(surface, (x, 0), element, color, background, size=size, scale=scale).width
+        self.render_to(surface, (0, 0), text, color, background, italic=italic, bold=bold, size=size, scale=scale)
         return surface
     
     def render_to(self, surface: Surface, pos: tuple[int, int], text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Rect:
         elements = parse(text)
         x = pos[0]
+        if background:
+            width = sum(self.find_font(element).get_rect(element, italic=italic, bold=bold, size=size, scale=scale).width for element in elements)
+            height = self.get_height(size)
+            surface.fill(background, (pos, (width, height)))
         for element in elements:
             font_series = self.find_font(element)
-            x += font_series.render_to(surface, (x, pos[1]), element, color, background, size=size, scale=scale).width
+            x += font_series.render_to(surface, (x, pos[1]), element, color, size=size, scale=scale).width
         return Rect(pos, (x - pos[0], self.get_height(size)))
     
     def get_rect(self, text: str, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Rect:
