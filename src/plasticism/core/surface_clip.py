@@ -1,5 +1,5 @@
 from typing import Union, Optional
-from pygame.typing import Point
+from pygame.typing import Point, ColorLike, RectLike
 
 from pygame import Surface, Rect, Vector2, Color
 
@@ -16,7 +16,7 @@ class SurfaceClip:
 
     def blit(self, source: SurfaceLike, dest: Point = (0, 0)) -> None:
         dest_vector = Vector2(*dest)
-        blit_offset = Vector2(*self.clip_rect.topleft)
+        blit_offset = self.get_blit_offset()
         surface_pos = dest_vector + blit_offset
         if isinstance(source, SurfaceClip):
             surface_pos += Vector2(*source.clip_rect.topleft)
@@ -24,22 +24,26 @@ class SurfaceClip:
         else:
             self.surface.blit(source, surface_pos)
 
-    def fill(self, color: Color, rect: Union[Rect, None] = None) -> None:
+    def fill(self, color: ColorLike, rect: Union[RectLike, None] = None) -> None:
         if rect is None:
             self.surface.fill(color, self.clip_rect)
         else:
+            rect = Rect(rect)
             dest_vector = Vector2(*rect.topleft)
-            blit_offset = Vector2(*self.clip_rect.topleft)
+            blit_offset = self.get_blit_offset()
             blit_pos = dest_vector + blit_offset
             self.surface.fill(color, Rect(blit_pos.x, blit_pos.y, rect.width, rect.height))
 
     def subclip(self, rect: Rect) -> 'SurfaceClip':
-        rect = offset_rect(rect, Vector2(*self.clip_rect.topleft))
+        rect = offset_rect(rect, self.get_blit_offset())
         surface_rect = rect.clip(self.surface.get_rect())
         if surface_rect.width == 0 or surface_rect.height == 0:
             return SurfaceClip(Surface((0, 0)), Rect(0, 0, 0, 0))
         else:
             return SurfaceClip(self.surface.subsurface(surface_rect), parent=self)
+    
+    def get_blit_offset(self) -> Vector2:
+        return Vector2(*self.clip_rect.topleft)
         
     def get_parent(self) -> Optional['SurfaceClip']:
         return self.parent_clip
