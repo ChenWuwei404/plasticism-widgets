@@ -197,3 +197,11 @@ class FontFamily:
     
     def get_descender(self, size: float = 0) -> int:
         return min(font_series.get_descender(size) for font_series in self.font_series)
+
+import sys
+if sys.platform == 'win32':
+    default_font = FontSeries.from_names(16, 'SimHei')
+elif sys.platform == 'darwin':
+    default_font = FontSeries.from_names(16, 'PingFang SC')
+else:
+    default_font = FontSeries.from_names(16, 'DejaVu Sans')
