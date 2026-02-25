@@ -206,7 +206,16 @@ FontLike = FontSeries | FontFamily
 
 import sys
 if sys.platform == 'win32':
-    default_font = FontFamily.from_names(16, ('Arial', None, None, None), ('思源黑体 CN Regular', None, None, None))
+    default_font = FontFamily(
+        FontSeries.from_files(16,
+                              r'C:\Windows\Fonts\arial.ttf',
+                              r'C:\Windows\Fonts\arialbd.ttf',
+                              r'C:\Windows\Fonts\ariali.ttf',
+                              r'C:\Windows\Fonts\arialbi.ttf'),
+        FontSeries.from_files(16,
+                              r'C:\Windows\Fonts\simhei.ttf',
+                              ),
+        )
 elif sys.platform == 'darwin':
     default_font = FontSeries.from_names(16, 'PingFang SC')
 else:
