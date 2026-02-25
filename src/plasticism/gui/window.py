@@ -23,7 +23,6 @@ class Window:
     def __init__(self, size: tuple[int, int], widget: Widget, flags: int = 0, vsync: int = 0) -> None:
         os.environ["SDL_IME_SHOW_UI"] = "1"
         os.environ["SDL_WINDOWS_DPI_AWARENESS"] = "permonitor"
-        print(os.environ.items())
 
         pygame.init() if not pygame.get_init() else None
         self.set_root_widget(widget)
