@@ -1,10 +1,10 @@
 from pygame.typing import ColorLike
 
 from plasticism.core.surface_clip import SurfaceClip
-from plasticism.gui import Widget
-from abc import ABC, abstractmethod
+from plasticism.base import Widget
+from abc import abstractmethod
 
-class BackgroundBase(Widget, ABC):
+class BackgroundBase(Widget):
     @abstractmethod
     def get_background_color(self) -> ColorLike:...
 

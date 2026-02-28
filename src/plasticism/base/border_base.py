@@ -1,12 +1,12 @@
 from pygame.typing import ColorLike
 
 from plasticism.core.surface_clip import SurfaceClip
-from plasticism.gui import Widget
-from abc import ABC, abstractmethod
+from plasticism.base import Widget
+from abc import abstractmethod
 
 from plasticism.core.draw import rect_outline
 
-class BorderBase(Widget, ABC):
+class BorderBase(Widget):
     @abstractmethod
     def get_border_color(self) -> ColorLike:...
 

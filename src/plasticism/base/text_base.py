@@ -2,10 +2,10 @@ from typing import Optional
 from pygame.typing import ColorLike
 from plasticism.core.font import FontLike, default_font
 
-from plasticism.gui import Widget
-from abc import ABC, abstractmethod
+from plasticism.base import Widget
+from abc import abstractmethod
 
-class TextBase(Widget, ABC):
+class TextBase(Widget):
     def __init__(self) -> None:
         super().__init__()
         self.font_size = 16

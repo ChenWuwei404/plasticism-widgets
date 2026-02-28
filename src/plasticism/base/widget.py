@@ -8,13 +8,15 @@ from plasticism.core.layout import Layout, Position, AlignHorizontal, AlignVerti
 from pygame import Surface, Rect
 from plasticism.core.surface_clip import SurfaceClip
 
+from abc import ABC
+
 class MouseEnter(LocalEvent, MouseEvent):
     pass
 
 class MouseLeave(LocalEvent, MouseEvent):
     pass
 
-class Widget:
+class Widget(ABC):
     """
     Base class for all GUI widgets.
 
