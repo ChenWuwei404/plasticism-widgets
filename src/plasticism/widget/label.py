@@ -3,19 +3,16 @@ from pygame.typing import ColorLike
 
 from plasticism.core.surface_clip import SurfaceClip
 from plasticism.core.layout import AlignHorizontal, AlignVertical
-from plasticism.core.font import FontLike, default_font
 
-from plasticism.gui import Widget
+from plasticism.base import TextBase
 
 
-class Label(Widget):
+class Label(TextBase):
     def __init__(self, text: str) -> None:
         super().__init__()
         self.text = text
         self.text_align_horizontal = AlignHorizontal.LEFT
         self.text_align_vertical = AlignVertical.TOP
-        self.font_size = 16
-        self.font: Optional[FontLike] = None
 
     def get_min_height(self) -> int:
         return max(super().get_min_height(), self.get_text_height() + self.padding_top + self.padding_bottom)
@@ -28,18 +25,6 @@ class Label(Widget):
 
     def get_text(self) -> str:
         return self.text
-    
-    def set_font_size(self, font_size: int) -> None:
-        self.font_size = font_size
-
-    def get_font_size(self) -> int:
-        return self.font_size
-    
-    def set_font(self, font: Optional[FontLike]) -> None:
-        self.font = font
-    
-    def get_font(self) -> FontLike:
-        return self.font or default_font
     
     def get_text_width(self) -> int:
         return self.get_font().get_rect(self.text, size=self.font_size, scale=self.get_scale_factor()).width
