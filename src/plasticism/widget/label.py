@@ -4,7 +4,7 @@ from pygame.typing import ColorLike
 from plasticism.core.surface_clip import SurfaceClip
 from plasticism.core.layout import AlignHorizontal, AlignVertical
 
-from plasticism.gui import TextBase
+from plasticism.base import TextBase
 
 
 class Label(TextBase):

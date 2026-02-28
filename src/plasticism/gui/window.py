@@ -7,7 +7,7 @@ from pygame import Surface, SRCALPHA
 from pygame import Color
 from pygame import Rect
 
-from plasticism.gui.widget import Widget
+from plasticism.base.widget import Widget
 from plasticism.core.event import Event, generate_event
 from plasticism.core.surface_clip import SurfaceClip
 

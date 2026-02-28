@@ -1,13 +1,13 @@
 from plasticism.core.transition import State, Transition, Machine
 from plasticism.core.transition import class_judger
 
-from plasticism.gui.widget import MouseEnter, MouseLeave
+from plasticism.base.widget import MouseEnter, MouseLeave
 from plasticism.core.event import MousePress, MouseRelease, LocalEvent, MouseButton
 
 class ButtonClick(LocalEvent, MouseButton):
     pass
 
-class ButtonMachine(Machine):
+class ClickableMachine(Machine):
     def __init__(self) -> None:
         super().__init__()
         self.idle = State("idle")
