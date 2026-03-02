@@ -108,6 +108,18 @@ class Widget(ABC):
             child.update(dt)
         
 
+    def set_align_horizontal(self, align: AlignHorizontal) -> None:
+        self.align_horizontal = align
+
+    def set_align_vertical(self, align: AlignVertical) -> None:
+        self.align_vertical = align
+
+    def get_align_horizontal(self) -> AlignHorizontal:
+        return self.align_horizontal
+
+    def get_align_vertical(self) -> AlignVertical:
+        return self.align_vertical
+
     def set_scale_factor(self, scale_factor: float) -> None:
         self.scale_factor = scale_factor
 
@@ -134,8 +146,8 @@ class Widget(ABC):
             return self.x
         else:
             return self.get_layout_x() + self.x + (
-                0 if self.align_horizontal == AlignHorizontal.LEFT else
-                (self.get_layout_width() - self.get_occupied_width()) // 2 if self.align_horizontal == AlignHorizontal.CENTER else
+                0 if self.get_align_horizontal() == AlignHorizontal.LEFT else
+                (self.get_layout_width() - self.get_occupied_width()) // 2 if self.get_align_horizontal() == AlignHorizontal.CENTER else
                 self.get_layout_width() - self.get_occupied_width()
                 )
     
@@ -144,8 +156,8 @@ class Widget(ABC):
             return self.y
         else:
             return self.get_layout_y() + self.y + (
-                0 if self.align_vertical == AlignVertical.TOP else
-                (self.get_layout_height() - self.get_occupied_height()) // 2 if self.align_vertical == AlignVertical.MIDDLE else
+                0 if self.get_align_vertical() == AlignVertical.TOP else
+                (self.get_layout_height() - self.get_occupied_height()) // 2 if self.get_align_vertical() == AlignVertical.MIDDLE else
                 self.get_layout_height() - self.get_occupied_height()
                 )
         

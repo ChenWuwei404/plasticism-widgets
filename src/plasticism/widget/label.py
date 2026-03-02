@@ -14,6 +14,18 @@ class Label(TextBase):
         self.text_align_horizontal = AlignHorizontal.LEFT
         self.text_align_vertical = AlignVertical.TOP
 
+    def set_text_align_horizontal(self, align: AlignHorizontal) -> None:
+        self.text_align_horizontal = align
+
+    def set_text_align_vertical(self, align: AlignVertical) -> None:
+        self.text_align_vertical = align
+
+    def get_text_align_horizontal(self) -> AlignHorizontal:
+        return self.text_align_horizontal
+
+    def get_text_align_vertical(self) -> AlignVertical:
+        return self.text_align_vertical
+
     def get_min_height(self) -> int:
         return max(super().get_min_height(), self.get_text_height() + self.padding_top + self.padding_bottom)
     
@@ -27,27 +39,39 @@ class Label(TextBase):
         return self.text
     
     def get_text_width(self) -> int:
-        return self.get_font().get_rect(self.text, size=self.font_size, scale=self.get_scale_factor()).width
+        return self.get_font().get_rect(self.text, size=self.font_size, scale=1.0).width
     
     def get_text_height(self) -> int:
+        return self.get_font().get_rect(self.text, size=self.font_size, scale=1.0).height
+    
+    def get_visual_text_width(self) -> int:
+        return self.get_font().get_rect(self.text, size=self.font_size, scale=self.get_scale_factor()).width
+    
+    def get_visual_text_height(self) -> int:
         return self.get_font().get_rect(self.text, size=self.font_size, scale=self.get_scale_factor()).height
     
     def get_text_x(self) -> int:
-        return 0 if self.text_align_horizontal == AlignHorizontal.LEFT else \
-            (self.get_width() - self.get_text_width()) // 2 if self.text_align_horizontal == AlignHorizontal.CENTER else \
+        return 0 if self.get_text_align_horizontal() == AlignHorizontal.LEFT else \
+            (self.get_width() - self.get_text_width()) // 2 if self.get_text_align_horizontal() == AlignHorizontal.CENTER else \
             self.get_width() - self.get_text_width()
     
     def get_text_y(self) -> int:
-        return 0 if self.text_align_vertical == AlignVertical.TOP else \
-            (self.get_height() - self.get_text_height()) // 2 if self.text_align_vertical == AlignVertical.MIDDLE else \
+        return 0 if self.get_text_align_vertical() == AlignVertical.TOP else \
+            (self.get_height() - self.get_text_height()) // 2 if self.get_text_align_vertical() == AlignVertical.MIDDLE else \
             self.get_height() - self.get_text_height()
+    
+    def get_visual_text_x(self) -> int:
+        return int(self.get_text_x() * self.scale_factor)
+    
+    def get_visual_text_y(self) -> int:
+        return int(self.get_text_y() * self.scale_factor)
     
     def get_color(self) -> ColorLike:
         return (255, 255, 255)
 
     def draw_content(self, clip: SurfaceClip) -> None:
-        self.get_font().render_to(clip.surface, (self.get_text_x(), self.get_text_y()), self.text, self.get_color(), size=self.font_size, scale=self.get_scale_factor())
+        self.get_font().render_to(clip.surface, (self.get_visual_text_x(), self.get_visual_text_y()), self.text, self.get_color(), size=self.font_size, scale=self.get_scale_factor())
 
 class FixedScaleLabel(Label):
     def draw_content(self, clip: SurfaceClip) -> None:
-        self.get_font().render_to(clip.surface, (self.get_text_x(), self.get_text_y()), self.text, self.get_color(), size=self.font_size)
+        self.get_font().render_to(clip.surface, (self.get_visual_text_x(), self.get_visual_text_y()), self.text, self.get_color(), size=self.font_size)
