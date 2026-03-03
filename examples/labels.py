@@ -1,9 +1,14 @@
 from plasticism.gui import Window
+from plasticism.base import BackgroundBase
 from plasticism.widget import Widget, Label, FixedScaleLabel
 
 from plasticism.core.layout import AlignHorizontal
 
-root = Widget()
+class Background(BackgroundBase):
+    def get_background_color(self):
+        return (0, 0, 0)
+
+root = Background()
 
 label1 = Label("This is a Label")
 label1.set_x(10)
