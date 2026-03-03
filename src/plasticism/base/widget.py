@@ -313,6 +313,12 @@ class Widget(ABC):
             raise ValueError(f"{repr(self)} has no parent.")
         return self.parent
     
+    def get_frame(self) -> 'Frame':
+        return self if isinstance(self, Frame) else self.get_parent().get_frame()
+
+    def get_root(self) -> 'Widget':
+        return self if self.parent is None else self.get_parent().get_root()
+    
     def add_child(self, child: 'Widget') -> None:
         child.set_parent(self)
         self.children.append(child)
@@ -499,3 +505,10 @@ class Widget(ABC):
         :type clip: SurfaceClip
         """
         pass
+
+class Frame(Widget):
+    def __init__(self) -> None:
+        super().__init__()
+        
+    def bubble_event(self, event: Event) -> None:
+        return
