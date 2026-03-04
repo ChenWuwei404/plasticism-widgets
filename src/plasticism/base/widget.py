@@ -38,8 +38,8 @@ class Widget(ABC):
 
     ### Steps
     
-    1. **Event Filtering**: Each widget can implement the `event_filter_checker` method to determine whether to filter out specific events. If an event is filtered out, it will not be processed further by that widget.
-    2. **Event Fetching**: The `event_fetch_checker` method allows widgets to decide whether to fetch an event for processing. If an event is fetched, it will be handled by the widget itself rather than being passed directly to its children.
+    1. **Event Filtering**: Each widget can implement the `event_filter_check` method to determine whether to filter out specific events. If an event is filtered out, it will not be processed further by that widget.
+    2. **Event Fetching**: The `event_fetch_check` method allows widgets to decide whether to fetch an event for processing. If an event is fetched, it will be handled by the widget itself rather than being passed directly to its children.
     3. **Event Processing**: Widgets can have multiple event processors that handle events in `Widget.event_processors`. The `process_events` method iterates through all registered processors to process the event bundle.
     4. **Event Assigning**: The `assign_events` method uses an `Assigner` to manage event assignments. This allows for dynamic event handling based on the widget's configuration.
     5. **Event Bubbling**: After processing, events can be bubbled up to parent widgets using the `bubble_event` method. This allows parent widgets to respond to events that were not fully handled by their children. Even can it used to spread signals to parent widgets.
@@ -330,7 +330,7 @@ class Widget(ABC):
     def get_children(self) -> list['Widget']:
         return self.children
     
-    def event_filter_checker(self, event: Event) -> bool:
+    def event_filter_check(self, event: Event) -> bool:
         """
         Check whether to filter out the event.
         
@@ -341,7 +341,7 @@ class Widget(ABC):
         """
         return False
     
-    def event_fetch_checker(self, event: Event) -> bool:
+    def event_fetch_check(self, event: Event) -> bool:
         """
         Check whether to fetch the event.
 
@@ -363,6 +363,15 @@ class Widget(ABC):
     def assign_events(self, event_bundle: EventBundle) -> None:
         self.assigner.process_event(event_bundle)
 
+    def bubble_check(self, event: Event) -> bool:
+        if isinstance(event, LocalEvent):
+            return False
+        if isinstance(event, SpreadEvent) and event.wrap is self:
+            return False
+        if isinstance(event, GlobalEvent) and event.handled:
+            return False
+        return True
+
     def bubble_event(self, event: Event) -> None:
         """
         Bubble an event up to the parent widget if needed.
@@ -371,13 +380,8 @@ class Widget(ABC):
         :type event: Event
         """
         if self.parent:
-            if isinstance(event, LocalEvent):
-                return
-            if isinstance(event, SpreadEvent) and event.wrap is self:
-                return
-            if isinstance(event, GlobalEvent) and event.handled:
-                return
-            self.get_parent().handle_event(event)
+            if self.bubble_check(event):
+                self.get_parent().handle_event(event)
     
     def handle_event(self, event: Event) -> None:
         """
@@ -400,9 +404,9 @@ class Widget(ABC):
         :param event: an Event to be tunnelled
         :type event: Event
         """
-        if self.event_filter_checker(event):
+        if self.event_filter_check(event):
             return
-        if self.event_fetch_checker(event):
+        if self.event_fetch_check(event):
             self.handle_event(event)
         
         if isinstance(event, UniversalEvent):
@@ -510,5 +514,5 @@ class Frame(Widget):
     def __init__(self) -> None:
         super().__init__()
         
-    def bubble_event(self, event: Event) -> None:
-        return
+    def bubble_check(self, event: Event) -> bool:
+        return super().bubble_check(event) and not isinstance(event, SpreadEvent)
