@@ -39,10 +39,10 @@ class Label(TextBase):
         return self.text
     
     def get_text_width(self) -> int:
-        return self.get_font().get_rect(self.text, size=self.font_size, scale=1.0).width
+        return round(self.get_visual_text_width() / self.get_scale_factor())
     
     def get_text_height(self) -> int:
-        return self.get_font().get_rect(self.text, size=self.font_size, scale=1.0).height
+        return round(self.get_visual_text_height() / self.get_scale_factor())
     
     def get_visual_text_width(self) -> int:
         return self.get_font().get_rect(self.text, size=self.font_size, scale=self.get_scale_factor()).width
