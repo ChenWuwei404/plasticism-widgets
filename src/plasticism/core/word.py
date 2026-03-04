@@ -1,3 +1,5 @@
+# DEPRECATED: This module is deprecated yet.
+
 from unicodedata import east_asian_width, category
 
 class Element(str):

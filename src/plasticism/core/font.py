@@ -9,7 +9,6 @@ from pygame import Surface, Rect, SRCALPHA
 
 from functools import lru_cache
 
-from plasticism.core.word import Element, parse
 from plasticism.core.surface_clip import SurfaceLike
 
 class Metrics:
@@ -161,14 +160,14 @@ class FontFamily:
         for font_series in self.font_series:
             font_series.size = value
 
-    def find_font(self, element: Element) -> FontSeries:
+    def find_font(self, string: str) -> FontSeries:
         for font_series in self.font_series:
-            if font_series.support(element):
+            if font_series.support(string):
                 return font_series
         return self.font_series[-1]
 
     def render(self, text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Surface:
-        elements = parse(text)
+        elements = text
         width = sum(self.find_font(element).get_rect(element, italic=italic, bold=bold, size=size, scale=scale).width for element in elements)
         height = self.get_height(size, scale)
         surface = Surface((width, height), SRCALPHA)
@@ -176,7 +175,7 @@ class FontFamily:
         return surface
     
     def render_to(self, surface: SurfaceLike, pos: tuple[int, int], text: str, color: ColorLike, background: Optional[ColorLike] = None, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Rect:
-        elements = parse(text)
+        elements = text
         x = pos[0]
         if background:
             width = sum(self.find_font(element).get_rect(element, italic=italic, bold=bold, size=size, scale=scale).width for element in elements)
@@ -188,7 +187,7 @@ class FontFamily:
         return Rect(pos, (x - pos[0], self.get_height(size, scale)))
     
     def get_rect(self, text: str, italic: bool = False, bold: bool = False, size = 0, scale = 1.0) -> Rect:
-        elements = parse(text)
+        elements = text
         width = sum(self.find_font(element).get_rect(element, italic=italic, bold=bold, size=size, scale=scale).width for element in elements)
         height = self.get_height(size, scale)
         return Rect((0, 0), (width, height))
