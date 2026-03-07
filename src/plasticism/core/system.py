@@ -80,6 +80,6 @@ elif sys.platform == "linux":
             pass
         return 1.0
 
-elif sys.platform == "macos":
+elif sys.platform == "darwin":
     pass
     # TODO: Implement for macOS platforms
