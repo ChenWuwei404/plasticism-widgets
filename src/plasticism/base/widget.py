@@ -408,10 +408,11 @@ class Widget(ABC):
             return
         if self.event_fetch_check(event):
             self.handle_event(event)
+            return
         
         if isinstance(event, UniversalEvent):
             [child.tunnel_event(event) for child in self.get_children()]
-        elif isinstance(event, MouseEvent):
+        elif isinstance(event, GlobalEvent):
             focused_child = next((child for child in self.get_children() if child.is_mouse_focused()), None)
             if focused_child:
                 focused_child.tunnel_event(event)
