@@ -1,12 +1,12 @@
 from plasticism.gui import Window
-from plasticism.base import BackgroundBase
+from plasticism.base import BackgroundBase, Root
 from plasticism.widget import Widget, Label, FixedScaleLabel
 
 from plasticism.core.layout import AlignHorizontal
 
 from pygame import RESIZABLE
 
-class Root(BackgroundBase):
+class Main(BackgroundBase, Root):
     def get_background_color(self):
         return (0, 0, 0)
     
@@ -27,7 +27,7 @@ class Root(BackgroundBase):
         self.add_child(self.label1)
         self.add_child(self.label2)
 
-root = Root()
+root = Main()
 
 window = Window((1280, 720), root, RESIZABLE)
 
