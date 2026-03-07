@@ -1,5 +1,5 @@
 from .widget import Widget, Frame
-from .root import Root
+from .root_base import RootBase
 
 from .border_base import BorderBase
 from .background_base import BackgroundBase
