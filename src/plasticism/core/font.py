@@ -11,6 +11,13 @@ from functools import lru_cache
 
 from plasticism.core.surface_clip import SurfaceLike
 
+def get_margin_left(char: str, previous: str, size: int, scale: float = 1.0) -> float:
+    return 0
+
+def get_margin_right(char: str, next: str, size: int, scale: float = 1.0) -> float:
+    return 0
+
+
 class Metrics:
     def __init__(self, metrics: Sequence[Optional[Tuple[int, int, int, int, float, float]]]) -> None:
         self.metrics = metrics
