@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Callable, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from plasticism.gui import Widget
+    from plasticism.base import Widget
 
 from pygame import Event as PygameEvent
 from pygame import constants, mouse
@@ -38,12 +38,28 @@ pygame_events: dict[int, Callable[[PygameEvent], Event]] = {
     constants.WINDOWMINIMIZED: lambda e: WindowMinimize(),
     constants.WINDOWMAXIMIZED: lambda e: WindowMaximize(),
     constants.WINDOWRESTORED: lambda e: WindowRestore(),
+    constants.WINDOWSHOWN: lambda e: WindowShow(),
+    constants.WINDOWENTER: lambda e: WindowEnter(),
+    constants.WINDOWLEAVE: lambda e: WindowLeave(),
+    constants.WINDOWFOCUSGAINED: lambda e: WindowFocusGain(),
+    constants.WINDOWFOCUSLOST: lambda e: WindowFocusLost(),
+    constants.ACTIVEEVENT: lambda e: ActiveEvent(e.gain, e.state),
+    constants.QUIT: lambda e: Quit(),
 }
+
+excluded_events = [
+    constants.VIDEOEXPOSE,
+    constants.VIDEORESIZE,
+    constants.WINDOWSIZECHANGED,
+    constants.WINDOWEXPOSED,
+]
 
 def register_event_type(event_type: int, generator: Callable[[PygameEvent], Event]):
     pygame_events[event_type] = generator
 
-def generate_event(event: PygameEvent) -> Event:
+def generate_event(event: PygameEvent) -> Optional[Event]:
+    if event.type in excluded_events:
+        return
     if event.type in pygame_events:
         try:
             return pygame_events[event.type](event)
@@ -140,4 +156,30 @@ class WindowMaximize(WindowEvent):
     pass
 
 class WindowRestore(WindowEvent):
+    pass
+
+class WindowShow(WindowEvent):
+    pass
+
+class WindowEnter(WindowEvent):
+    pass
+
+class WindowLeave(WindowEvent):
+    pass
+
+class WindowFocusGain(WindowEvent):
+    pass
+
+class WindowFocusLost(WindowEvent):
+    pass
+
+@dataclass
+class ActiveEvent(Event):
+    gain: int
+    state: int
+
+class Quit(WindowEvent):
+    pass
+
+class WindowExpose(WindowEvent):
     pass

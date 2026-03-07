@@ -110,7 +110,7 @@ class Window:
             if pg_event.type == pygame.VIDEORESIZE:
                 self.set_size((pg_event.w, pg_event.h), resized=True)
             event = generate_event(pg_event)
-            self.root_widget.tunnel_event(event)
+            self.root_widget.tunnel_event(event) if event else None
 
     def update(self, dt: float) -> None:
         self.root_widget.update(dt)
