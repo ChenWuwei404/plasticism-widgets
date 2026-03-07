@@ -7,7 +7,7 @@ from pygame import Surface, SRCALPHA
 from pygame import Color
 from pygame import Rect
 
-from plasticism.base import Widget, RootBase
+from plasticism.base import Widget, Root
 from plasticism.core.event import generate_event
 from plasticism.core.surface_clip import SurfaceClip
 
@@ -81,7 +81,7 @@ class Window:
     def set_root_widget(self, widget: Widget) -> None:
         self.root_widget = widget
         self.root_widget.set_size((-1, -1))
-        if isinstance(widget, RootBase):
+        if isinstance(widget, Root):
             widget.set_window(self)
 
     def exec(self) -> None:

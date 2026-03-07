@@ -8,7 +8,7 @@ from plasticism.core.trigger import Trigger
 from plasticism.core.assigner import AssignerItem
 from plasticism.core.event import Event, Quit
 
-class RootBase(Widget):
+class Root(Widget):
     def __init__(self) -> None:
         super().__init__()
         self.window: Optional['Window'] = None
