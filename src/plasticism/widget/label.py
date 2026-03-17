@@ -61,10 +61,10 @@ class Label(TextBase):
             self.get_height() - self.get_text_height()
     
     def get_visual_text_x(self) -> int:
-        return int(self.get_text_x() * self.scale_factor)
+        return int(self.get_text_x() * self.get_scale_factor())
     
     def get_visual_text_y(self) -> int:
-        return int(self.get_text_y() * self.scale_factor)
+        return int(self.get_text_y() * self.get_scale_factor())
     
     def get_color(self) -> ColorLike:
         return (255, 255, 255)
@@ -75,3 +75,9 @@ class Label(TextBase):
 class FixedScaleLabel(Label):
     def draw_content(self, clip: SurfaceClip) -> None:
         self.get_font().render_to(clip.surface, (self.get_visual_text_x(), self.get_visual_text_y()), self.text, self.get_color(), size=self.font_size)
+    
+    def get_visual_text_width(self) -> int:
+        return self.get_font().get_rect(self.text, size=self.font_size).width
+    
+    def get_visual_text_height(self) -> int:
+        return self.get_font().get_rect(self.text, size=self.font_size).height
